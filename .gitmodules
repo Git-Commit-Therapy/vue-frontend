@@ -1,0 +1,3 @@
+[submodule "composable/protobuf"]
+	path = composable/protobuf
+	url = git@github.com:Git-Commit-Therapy/protobuf-models.git
