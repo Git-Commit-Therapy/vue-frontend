@@ -1,0 +1,9 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+COPY package.json pnpm-lock.yaml .
+RUN npm install -g pnpm
+RUN pnpm install
+VOLUME [ "/app" ]
+EXPOSE 3000
+CMD ["pnpm", "run", "dev"]
