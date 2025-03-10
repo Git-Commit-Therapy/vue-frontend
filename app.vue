@@ -18,10 +18,13 @@ onBeforeMount( async() => {
 </script>
 
 <template>
-  <div>
-    <NavBar v-if="isAuthenticated" />
-    <NuxtPage />
-  </div>
+  <NuxtLayout>
+    <v-app>
+      <!-- <NavBar v-if="isAuthenticated" /> -->
+      <NavBar />
+      <NuxtPage />
+    </v-app>
+  </NuxtLayout>
 </template>
 
 <style>
