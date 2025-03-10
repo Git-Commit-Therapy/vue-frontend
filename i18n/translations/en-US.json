@@ -1,3 +1,28 @@
 {
-    
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "hospitalName": "San Committo Hospital",
+  "fiscalCode": "Fiscal code",
+  "email": "E-mail",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "login": "Login",
+  "signUp": "Sign up",
+  "loginTitle": "Login into your account",
+  "signUpTitle": "Sign up your account",
+  "forgottenPassword": "Forgot password?",
+  "noAccount": "Don't have an account yet? Sign up here",
+  "haveAccount": "Already have an account? Login",
+  "required": "Parameter required",
+  "wrongFormat": "Wrong format",
+  "languageError": "Could not change language, please try later.",
+  "visitList": "Your visits",
+  "reportList": "Your medical reports",
+  "invalidPassword": "Password must be atleast 8 characters long.",
+  "passwordMatch": "Passwords must match.",
+  "dateOfBirth": "Birth Date",
+  "phoneNumber": "Phone number",
+  "loginFailed": "Invalid credentials, try again.",
+  "genericError": "Generic error"
 }
+
