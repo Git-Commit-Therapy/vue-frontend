@@ -45,7 +45,7 @@ export default class AuthGRPC {
   }
 
   /**
-   * Attempts to login the user given some informations
+   * gRPC request to login the user given some informations
    * @param {string} fiscalCode User's fiscal code.
    * @param {string} password User's password.
    * @returns {Promise<LoginResponse>} Promise object that when fullfilled returns the answer of the server.
@@ -57,7 +57,7 @@ export default class AuthGRPC {
   }
 
   /**
-   * Attempts to signup a new user.
+   * gRPC request to signup a new user.
    * @param {string} fiscalCode User's fiscal code.
    * @param {string} name User's first name.
    * @param {string} surname User's last name.
@@ -90,7 +90,7 @@ export default class AuthGRPC {
   }
 
   /**
-   * Refreshes the user's authentication token.
+   * gRPC request to refresh the user's authentication token.
    * @param {string} refreshToken Token used to refresh the user's authentication.
    * @returns {Promise<RefreshTokenResponse>} Promise object that when fulfilled returns the new token information from the server.
    */
