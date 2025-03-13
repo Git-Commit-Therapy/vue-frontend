@@ -25,14 +25,14 @@ export default class AuthGRPC {
 
   /**
    * Gets the singleton instance of AuthGRPC.
-   * @param {string} url URL of the gRPC server (only used when creating a new instance).
+   * @param {string?} url URL of the gRPC server.
    * @returns {AuthGRPC} The singleton instance.
    */
-  public static getInstance(url: string): AuthGRPC {
-    if (!AuthGRPC.instance) {
+  public static getInstance(url?: string): AuthGRPC {
+    if (!AuthGRPC.instance && url) {
       AuthGRPC.instance = new AuthGRPC(url);
     }
-    return AuthGRPC.instance;
+    return AuthGRPC.instance!;
   }
 
   /**
