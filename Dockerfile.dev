@@ -6,4 +6,5 @@ RUN npm install -g pnpm
 RUN pnpm install
 VOLUME [ "/app" ]
 EXPOSE 3000
+CMD ["rm", "-rf", "/tmp/nitro/worker-*"]
 CMD ["pnpm", "run", "dev"]
