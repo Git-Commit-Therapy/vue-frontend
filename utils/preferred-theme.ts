@@ -2,7 +2,7 @@
  * Checks the user's preferred CSS color scheme
  * @returns {"light"|"dark"} Preferred color scheme
  */
-export default function getPreferredTheme() {
+export default function getPreferredTheme(): string {
   // Checks if we're in the browser environment
   // Since we are using SSR, we can't be sure that we're
   // always in a client environment.
