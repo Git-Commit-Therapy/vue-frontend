@@ -54,7 +54,7 @@ export default class PatientGRPC {
   private createPatientsGrpcClient(url: string): PatientServicesClient {
     const channel: Channel = createChannel(url);
     const authStore = useAuthStore();
-    const token = authStore.jwt;
+    const token = authStore.getAccessToken();
     if (!token) {
       throw new Error("JWT is missing");
     }

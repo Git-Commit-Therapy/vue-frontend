@@ -29,9 +29,16 @@ export default class AuthGRPC {
    * @returns {AuthGRPC} The singleton instance.
    */
   public static getInstance(url?: string): AuthGRPC {
+    if (!AuthGRPC.instance && !url)
+      throw new Error(
+        "AuthGRPC has not been initialized, usage: getInstance(url)",
+      );
     if (!AuthGRPC.instance && url) {
       AuthGRPC.instance = new AuthGRPC(url);
     }
+
+    // Technically here we're assured that it's instantiated
+    // But the compiler is not sure, hence why ! is needed.
     return AuthGRPC.instance!;
   }
 
