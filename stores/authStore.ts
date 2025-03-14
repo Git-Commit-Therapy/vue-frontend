@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
+import jwtDecode from "jwt-decode";
 import { ref } from "vue";
 
+interface AuthToken {
+  exp: number;
+  [key: string]: unknown;
+}
 /**
  * Authentication store that only manages auth-related state
  */
@@ -38,6 +43,23 @@ export const useAuthStore = defineStore("auth", () => {
     refreshToken.value = "";
   }
 
+  /**
+   * Returns is the stored token is valid, i.e. the user is authenticated.
+   * @returns {boolean} Boolean value depending of the token.
+   */
+  function isValidToken(): boolean {
+    if (accessToken.value === "") return false;
+
+    try {
+      const decodedToken = jwtDecode<AuthToken>(accessToken.value);
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp > currentTime;
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return false;
+    }
+  }
+
   return {
     getAuthUrl,
     setAuthUrl,
@@ -46,5 +68,6 @@ export const useAuthStore = defineStore("auth", () => {
     getRefreshToken,
     setRefreshToken,
     clearTokens,
+    isValidToken,
   };
 });
