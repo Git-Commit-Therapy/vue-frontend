@@ -1,27 +1,18 @@
 <script setup>
-import { useAuthStore } from '@/stores/authStore'
-import { useDataStore } from '@/stores/dataStore'
 import NavBar from '@/components/NavBar.vue'
+import { useAuthStore } from '@/stores/authStore';
 
-const authStore = useAuthStore()
-const isAuthenticated = authStore.isAuthenticated()
-
-const dataStore = useDataStore()
-
+const authStore = useAuthStore();
+const validJWT = authStore.isValidToken();
 onBeforeMount( async() => {
-  await dataStore.init()
-
-  if(isAuthenticated){
-    await dataStore.initPatientData()
-  }
+  authStore.setAuthUrl(process.env.VITE_APP_AUTH_URL);
 })
 </script>
 
 <template>
   <NuxtLayout>
     <v-app>
-      <!-- <NavBar v-if="isAuthenticated" /> -->
-      <NavBar />
+      <NavBar v-if="validJWT" />
       <NuxtPage />
     </v-app>
   </NuxtLayout>

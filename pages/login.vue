@@ -1,7 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore';
+import AuthGRPC from '@/composable/clients/authGrpcClient';
+import { LoginResponse, AuthStatus} from '@/composable/protobuf/frontend/auth_services';
 const authStore = useAuthStore();
-
+const authService: AuthGRPC = AuthGRPC.getInstance(authStore.getAuthUrl());
 const fiscalCode = ref('');
 const password = ref('');
 
@@ -18,14 +20,15 @@ const login = async () => {
   }
 
   try {
-    await authStore.authenticate(fiscalCode.value, password.value)
-    router.push('/dashboard')
+    const authResult: LoginResponse = await authService.login(fiscalCode.value, password.value);
+    if (authResult.loginStatus === AuthStatus.SUCCESS) {
+      return navigateTo('/dashboard')
+    }
   } catch (error) {
     console.log(error)
     loginError.value = true
   }
 }
-
 </script>
 
 
