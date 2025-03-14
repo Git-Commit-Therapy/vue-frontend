@@ -1,3 +1,18 @@
+<script setup>
+  import { useLocale, useTheme } from 'vuetify'
+
+
+  const { current } = useLocale()
+  const theme = useTheme()
+
+  function toggleTheme () {
+    theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  }
+  function changeLocale (locale) {
+    current.value = locale
+  }
+</script>
+
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -10,6 +25,9 @@
         </router-link>
       </div>
     </div>
+    <v-btn @click="toggleTheme">toggle theme</v-btn>
+    <v-btn @click="changeLocale">change locale</v-btn>
+
   </nav>
 </template>
 
