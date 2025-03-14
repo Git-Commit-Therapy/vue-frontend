@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "hospitalName": {
+      "type": "string"
+    },
+    "fiscalCode": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "confirmPassword": {
+      "type": "string"
+    },
+    "login": {
+      "type": "string"
+    },
+    "signUp": {
+      "type": "string"
+    },
+    "loginTitle": {
+      "type": "string"
+    },
+    "signUpTitle": {
+      "type": "string"
+    },
+    "forgottenPassword": {
+      "type": "string"
+    },
+    "noAccount": {
+      "type": "string"
+    },
+    "haveAccount": {
+      "type": "string"
+    },
+    "required": {
+      "type": "string"
+    },
+    "wrongFormat": {
+      "type": "string"
+    },
+    "languageError": {
+      "type": "string"
+    },
+    "visitList": {
+      "type": "string"
+    },
+    "reportList": {
+      "type": "string"
+    },
+    "invalidPassword": {
+      "type": "string"
+    },
+    "passwordMatch": {
+      "type": "string"
+    },
+    "dateOfBirth": {
+      "type": "string"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "loginFailed": {
+      "type": "string"
+    },
+    "genericError": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "firstName",
+    "lastName",
+    "hospitalName",
+    "fiscalCode",
+    "email",
+    "password",
+    "confirmPassword",
+    "login",
+    "signUp",
+    "loginTitle",
+    "signUpTitle",
+    "forgottenPassword",
+    "noAccount",
+    "haveAccount",
+    "required",
+    "wrongFormat",
+    "languageError",
+    "visitList",
+    "reportList",
+    "invalidPassword",
+    "passwordMatch",
+    "dateOfBirth",
+    "phoneNumber",
+    "loginFailed",
+    "genericError"
+  ]
+}

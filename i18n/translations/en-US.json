@@ -1,4 +1,5 @@
 {
+  "$schema": "./i18n.schema.json",
   "firstName": "First Name",
   "lastName": "Last Name",
   "hospitalName": "San Committo Hospital",
@@ -25,4 +26,3 @@
   "loginFailed": "Invalid credentials, try again.",
   "genericError": "Generic error"
 }
-

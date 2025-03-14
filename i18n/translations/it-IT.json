@@ -1,4 +1,5 @@
 {
+  "$schema": "./i18n.schema.json",
   "firstName": "Nome",
   "lastName": "Cognome",
   "hospitalName": "Ospedale di San Committo",
@@ -25,4 +26,3 @@
   "loginFailed": "Credenziali invalide, riprova.",
   "genericError": "Errore generico"
 }
-
