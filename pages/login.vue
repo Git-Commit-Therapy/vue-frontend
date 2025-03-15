@@ -2,11 +2,14 @@
 import { ref, reactive} from 'vue';
 import { useRouter } from 'vue-router';
 import AuthGRPC from '@/composable/clients/authGrpcClient';
+import { AuthStatus, type LoginResponse } from '~/composable/protobuf/frontend/auth_services';
 
 const router = useRouter();
 const error = ref<string|null>(null);
 const showError = ref<boolean>(false);
 const { t } = useI18n();
+const authGRPC: AuthGRPC = AuthGRPC.getInstance();
+const authStore = useAuthStore();
 
 const values = reactive({
   fiscalCode: '',
@@ -92,11 +95,18 @@ function validate(): boolean {
   return !fiscalCodeError && !passwordError;
 };
 
-// TODO: finish this
-const handleSubmit = async () => {
+// TODO: handle failed login
+async function handleSubmit(){
   if (!validate()) {
     return;
   }
+  const response: LoginResponse= await authGRPC.login(values.fiscalCode, values.password);
+  if (response.loginStatus === AuthStatus.SUCCESS) {
+    authStore.setAccessToken(response.accessToken);
+    authStore.setRefreshToken(response.refreshToken);
+    return navigateTo('/dashboard');
+  }
+  return;
 };
 </script>
 
