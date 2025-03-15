@@ -24,5 +24,6 @@
   "dateOfBirth": "Birth Date",
   "phoneNumber": "Phone number",
   "loginFailed": "Invalid credentials, try again.",
-  "genericError": "Generic error"
+  "genericError": "Generic error",
+  "profile": "Profile"
 }

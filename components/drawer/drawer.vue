@@ -26,7 +26,7 @@ function closeDrawer() {
     >
       <v-list max-width="250">
         <v-list-item
-          to="/patient/visit"
+          to="/patient/appointments"
           @click="closeDrawer"
         >
           <template v-slot:prepend>
@@ -36,7 +36,7 @@ function closeDrawer() {
         </v-list-item>
 
         <v-list-item
-          to="/patient/report"
+          to="/patient/medical-exams"
           @click="closeDrawer"
         >
           <template v-slot:prepend>

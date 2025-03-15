@@ -14,9 +14,9 @@ const logout = () => {
 <template>
   <div>
     <h1>Profile</h1>
-    {{ authStore.patientData.patient }}
+    <!--{{ authStore.patientData.patient }}
 
-    {{ authStore.patientData.medicalInfo }}
+    {{ authStore.patientData.medicalInfo }}-->
     <button @click="logout">Logout</button>
   </div>
 </template>

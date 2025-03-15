@@ -24,5 +24,6 @@
   "dateOfBirth": "Data di nascita",
   "phoneNumber": "Numero di telefono",
   "loginFailed": "Credenziali invalide, riprova.",
-  "genericError": "Errore generico"
+  "genericError": "Errore generico",
+  "profile": "Profilo"
 }

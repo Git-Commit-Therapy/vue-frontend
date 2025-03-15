@@ -48,7 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
    * @returns {boolean} Boolean value depending of the token.
    */
   function isValidToken(): boolean {
-    if (accessToken.value === "") return false;
+    if (!accessToken.value) return false;
 
     try {
       const decodedToken = jwtDecode<AuthToken>(accessToken.value);

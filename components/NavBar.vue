@@ -1,17 +1,13 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { useLocale, useTheme } from 'vuetify';
+import { useAuthStore } from '@/stores/authStore';
 import Drawer from '~/components/drawer/drawer.vue';
 
+const authStore = useAuthStore();
 const { setLocale } = useI18n();
 const { current } = useLocale();
 const theme = useTheme();
-
-function checkUserLogin() {
-  return true;
-}
-
-const isUserLoggedIn = checkUserLogin();
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
@@ -30,7 +26,7 @@ function changeLocale(locale) {
     </v-app-bar-title>
     <v-spacer />
     <div class="d-flex align-center gap-2">
-      <v-btn v-if="isUserLoggedIn" variant="outlined" :to="'/profile'">
+      <v-btn v-if="authStore.isValidToken()" variant="outlined" :to="'/profile'">
         <v-icon start>mdi-account-box</v-icon>
         {{ $t('profile') }}
       </v-btn>
