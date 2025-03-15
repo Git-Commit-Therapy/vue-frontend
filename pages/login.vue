@@ -1,58 +1,168 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore';
+import { ref, reactive} from 'vue';
+import { useRouter } from 'vue-router';
 import AuthGRPC from '@/composable/clients/authGrpcClient';
-import { LoginResponse, AuthStatus} from '@/composable/protobuf/frontend/auth_services';
-const authStore = useAuthStore();
-// const authService: AuthGRPC | null = AuthGRPC.getInstance(authStore.getAuthUrl());
-const fiscalCode = ref('');
-const password = ref('');
 
-const loginError = ref(false)
-const validationError = ref('')
+const router = useRouter();
+const error = ref<string|null>(null);
+const showError = ref<boolean>(false);
+const { t } = useI18n();
 
-const login = async () => {
-  validationError.value= ''
-  loginError.value = false
+const values = reactive({
+  fiscalCode: '',
+  password: ''
+});
+const errors = reactive({
+  fiscalCode: '',
+  password: ''
+});
+const touched = reactive({
+  fiscalCode: false,
+  password: false
+});
 
-  if (!fiscalCode.value || !password.value) {
-    validationError.value = 'Fiscal Code and Password are required';
+/** This is a stupid function, however for some reason vue does not want to
+  * "directly" set values and we're forced to do this.
+  */
+function hideError() {
+  showError.value = false;
+}
+
+/**
+ * This function validates the given fiscalCode parameter.
+ * @param {string} fiscalCode Input value.
+ * @returns {string} Error message or empty string.
+*/
+function validateFiscalCode(fiscalCode: string): string {
+  if (!fiscalCode) {
+    return t('required');
+  }
+  if (fiscalCode.length !== 16) {
+    return t('wrongFormat')
+  }
+  if (!/^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$/.test(fiscalCode)) {
+    return t('wrongFormat')
+  }
+  return '';
+};
+
+/**
+ * This function validates the given password parameter.
+ * @param {string} password Input value.
+ * @returns {string} Error message or empty string.
+*/
+function validatePassword (password: string): string {
+  if (!password) {
+    return t('required');
+  }
+  if (password.length < 8) {
+    return t('invalidPassword');
+  }
+  return '';
+};
+
+/**
+ * This function handles blur of the given input field
+ * and sets the {error} value accordingly.
+ * @param {'fiscalCode'|'password'} field Form field to check.
+*/
+const handleBlur = (field: 'fiscalCode' | 'password') => {
+  touched[field] = true;
+  if (field === 'fiscalCode') {
+    errors.fiscalCode = validateFiscalCode(values.fiscalCode);
+  } else {
+    errors.password = validatePassword(values.password);
+  }
+};
+
+/**
+ * This function validates the form fields and sets the {error} values
+ * accordingly if something was not valid.
+ * @returns {boolean} Returns true if both fields are valid (no errors), false otherwise.
+*/
+function validate(): boolean {
+  const fiscalCodeError: string = validateFiscalCode(values.fiscalCode);
+  const passwordError: string = validatePassword(values.password);
+
+  errors.fiscalCode = fiscalCodeError;
+  errors.password = passwordError;
+  touched.fiscalCode = true;
+  touched.password = true;
+
+  return !fiscalCodeError && !passwordError;
+};
+
+// TODO: finish this
+const handleSubmit = async () => {
+  if (!validate()) {
     return;
   }
-
-  //try {
-   // const authResult: LoginResponse = await authService.login(fiscalCode.value, password.value);
-    //if (authResult.loginStatus === AuthStatus.SUCCESS) {
-     // return navigateTo('/dashboard')
-    //}
-  //} catch (error) {
-   // console.log(error)
-    //loginError.value = true
-  //}
-}
+};
 </script>
-
 
 <template>
   <div>
-    <h1>Login</h1>
-    <p v-if="loginError" class="error-login">Invalid credentials</p>
-    <p v-if="validationError" class="error-login">{{ validationError }}</p>
-    <div>
-      <label for="fiscalCode">Fiscal Code</label>
-      <input type="text" id="fiscalCode" name="fiscalCode" v-model="fiscalCode" />
-    </div>
-    <div>
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" v-model="password" />
-    </div>
-    <button @click="login">Login</button>
-    <p>Don't have an account? <router-link to="/signup">Sign Up</router-link></p>
+    <v-snackbar
+      v-model="showError"
+      :timeout="5000"
+      color="error"
+      location="top right"
+    >
+      {{ error }}
+      <template v-slot:actions>
+        <v-btn
+          variant="text"
+          icon="mdi-close"
+          @click="hideError"
+        ></v-btn>
+      </template>
+    </v-snackbar>
+
+    <v-card class="mx-auto my-4" max-width="500" rounded="lg">
+      <v-card-text>
+        <form @submit.prevent="handleSubmit">
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="values.fiscalCode"
+                  label="Fiscal Code"
+                  :error-messages="touched.fiscalCode && errors.fiscalCode ? errors.fiscalCode : ''"
+                  @blur="handleBlur('fiscalCode')"
+                  variant="outlined"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  v-model="values.password"
+                  label="Password"
+                  type="password"
+                  :error-messages="touched.password && errors.password ? errors.password : ''"
+                  @blur="handleBlur('password')"
+                  variant="outlined"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-btn
+                  color="primary"
+                  type="submit"
+                  block
+                  size="large"
+                >
+                  Login
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </form>
+        <div class="text-center mt-4">
+          <NuxtLink to="/register">{{$t("noAccount")}}</NuxtLink>
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
-
-
-<style lang="scss">
-.error-login {
-  color: red;
-}
-</style>
