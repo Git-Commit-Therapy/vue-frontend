@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore';
 import AuthGRPC from '@/composable/clients/authGrpcClient';
 import { LoginResponse, AuthStatus} from '@/composable/protobuf/frontend/auth_services';
 const authStore = useAuthStore();
-const authService: AuthGRPC = AuthGRPC.getInstance(authStore.getAuthUrl());
+// const authService: AuthGRPC | null = AuthGRPC.getInstance(authStore.getAuthUrl());
 const fiscalCode = ref('');
 const password = ref('');
 
@@ -19,15 +19,15 @@ const login = async () => {
     return;
   }
 
-  try {
-    const authResult: LoginResponse = await authService.login(fiscalCode.value, password.value);
-    if (authResult.loginStatus === AuthStatus.SUCCESS) {
-      return navigateTo('/dashboard')
-    }
-  } catch (error) {
-    console.log(error)
-    loginError.value = true
-  }
+  //try {
+   // const authResult: LoginResponse = await authService.login(fiscalCode.value, password.value);
+    //if (authResult.loginStatus === AuthStatus.SUCCESS) {
+     // return navigateTo('/dashboard')
+    //}
+  //} catch (error) {
+   // console.log(error)
+    //loginError.value = true
+  //}
 }
 </script>
 
