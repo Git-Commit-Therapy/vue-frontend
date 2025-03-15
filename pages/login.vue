@@ -78,7 +78,7 @@ const handleBlur = (field: 'fiscalCode' | 'password') => {
 /**
  * This function validates the form fields and sets the {error} values
  * accordingly if something was not valid.
- * @returns {boolean} Returns true if both fields are valid (no errors), false otherwise.
+ * @returns {boolean} Returns true if both fields are valid (i.e. no errors), false otherwise.
 */
 function validate(): boolean {
   const fiscalCodeError: string = validateFiscalCode(values.fiscalCode);
