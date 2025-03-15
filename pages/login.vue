@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive} from 'vue';
-import { useRouter } from 'vue-router';
 import AuthGRPC from '@/composable/clients/authGrpcClient';
 import { AuthStatus, type LoginResponse } from '~/composable/protobuf/frontend/auth_services';
 
-const router = useRouter();
 const error = ref<string|null>(null);
 const showError = ref<boolean>(false);
 const { t } = useI18n();
@@ -95,7 +93,10 @@ function validate(): boolean {
   return !fiscalCodeError && !passwordError;
 };
 
-// TODO: handle failed login
+/**
+ * Handles login, if credentials are valid, navigates to dashboard,
+ * else sets erorr message
+ */
 async function handleSubmit(){
   if (!validate()) {
     return;
@@ -105,6 +106,10 @@ async function handleSubmit(){
     authStore.setAccessToken(response.accessToken);
     authStore.setRefreshToken(response.refreshToken);
     return navigateTo('/dashboard');
+  }
+  if (response.loginStatus in [AuthStatus.UNRECOGNIZED, AuthStatus.FAIL]) {
+    error.value = t('loginFailed');
+    showError.value = true;
   }
   return;
 };
