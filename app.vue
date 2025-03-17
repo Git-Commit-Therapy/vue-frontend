@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 const authStore = useAuthStore();
 const validJWT = authStore.isValidToken();
 onBeforeMount( async() => {
-  authStore.setAuthUrl(process.env.VITE_APP_AUTH_URL);
+  authStore.setAuthUrl(AUTH_URL);
 })
 </script>
 

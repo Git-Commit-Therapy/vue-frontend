@@ -29,5 +29,8 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: [".sancommitto.local"],
     },
+    define: {
+      AUTH_URL: JSON.stringify(process.env.AUTH_URL),
+    },
   },
 });
