@@ -67,7 +67,7 @@ function validatePassword (password: string): string {
  * and sets the {error} value accordingly.
  * @param {'fiscalCode'|'password'} field Form field to check.
 */
-const handleBlur = (field: 'fiscalCode' | 'password') => {
+function handleBlur(field: 'fiscalCode' | 'password'): void {
   touched[field] = true;
   if (field === 'fiscalCode') {
     errors.fiscalCode = validateFiscalCode(values.fiscalCode);
@@ -81,16 +81,13 @@ const handleBlur = (field: 'fiscalCode' | 'password') => {
  * accordingly if something was not valid.
  * @returns {boolean} Returns true if both fields are valid (i.e. no errors), false otherwise.
 */
-function validate(): boolean {
-  const fiscalCodeError: string = validateFiscalCode(values.fiscalCode);
-  const passwordError: string = validatePassword(values.password);
-
-  errors.fiscalCode = fiscalCodeError;
-  errors.password = passwordError;
+function validateForm(): boolean {
+  errors.fiscalCode = validateFiscalCode(values.fiscalCode);
+  errors.password = validatePassword(values.password);
   touched.fiscalCode = true;
   touched.password = true;
 
-  return !fiscalCodeError && !passwordError;
+  return !errors.fiscalCode && !errors.password;
 };
 
 /**
@@ -98,7 +95,7 @@ function validate(): boolean {
  * else sets erorr message
  */
 async function handleSubmit(){
-  if (!validate()) {
+  if (!validateForm()) {
     return;
   }
   const response: LoginResponse= await authGRPC.login(values.fiscalCode, values.password);
