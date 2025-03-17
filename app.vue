@@ -1,12 +1,12 @@
 <script setup>
-import NavBar from '@/components/NavBar.vue'
-import { useAuthStore } from '@/stores/authStore';
+import NavBar from "@/components/navbar/navbar.vue";
+import { useAuthStore } from "@/stores/authStore";
 
 const authStore = useAuthStore();
 const validJWT = authStore.isValidToken();
-onBeforeMount( async() => {
+onBeforeMount(async () => {
   authStore.setAuthUrl(AUTH_URL);
-})
+});
 </script>
 
 <template>
@@ -24,5 +24,4 @@ onBeforeMount( async() => {
   </v-app>
 </template>
 
-<style>
-</style>
+<style></style>
