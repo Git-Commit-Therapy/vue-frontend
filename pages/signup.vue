@@ -345,7 +345,7 @@ async function handleSubmit() {
 
               <v-col cols="12">
                 <v-btn color="primary" type="submit" block size="large">
-                  {{ $t("signup") }}
+                  {{ $t("signUp") }}
                 </v-btn>
               </v-col>
             </v-row>
