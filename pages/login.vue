@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive} from 'vue';
 import AuthGRPC from '@/composable/clients/authGrpcClient';
-import { AuthStatus, type LoginResponse } from '~/composable/protobuf/frontend/auth_services';
+import { AuthStatus, type LoginResponse } from '@/composable/protobuf/frontend/auth_services';
 
 const error = ref<string|null>(null);
 const showError = ref<boolean>(false);
 const { t } = useI18n();
-const authGRPC: AuthGRPC = AuthGRPC.getInstance();
+const authGRPC: AuthGRPC = AuthGRPC.getInstance(useAuthStore().getAuthUrl());
 const authStore = useAuthStore();
 
 const values = reactive({
@@ -104,7 +104,7 @@ async function handleSubmit(){
     authStore.setRefreshToken(response.refreshToken);
     return navigateTo('/dashboard');
   }
-  if (response.loginStatus in [AuthStatus.UNRECOGNIZED, AuthStatus.FAIL]) {
+  if ([AuthStatus.UNRECOGNIZED, AuthStatus.FAIL].includes(response.loginStatus)) {
     error.value = t('loginFailed');
     showError.value = true;
   }
