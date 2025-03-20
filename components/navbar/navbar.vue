@@ -66,7 +66,9 @@ function toggleDrawer() {
         <v-icon>mdi-menu</v-icon>
       </v-btn>
       <v-app-bar-title class="text-truncate">
-        {{ $t("hospitalName") }}
+        <v-btn @click="navigateTo('/')">
+          {{ $t("hospitalName") }}
+        </v-btn>
       </v-app-bar-title>
       <v-spacer />
       <div class="d-flex align-center gap-2">
