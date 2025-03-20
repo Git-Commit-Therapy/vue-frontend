@@ -35,15 +35,25 @@ watch(
   },
 );
 
+/**
+ * Toggles theme preference.
+ */
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
 }
 
+/**
+ * Changes current language.
+ * @param {string} locale Locale to be set.
+ */
 function changeLocale(locale: string) {
   current.value = locale;
   setLocale(locale);
 }
 
+/**
+ * Toggles the drawer open.
+ */
 function toggleDrawer() {
   isDrawerOpen.value = !isDrawerOpen.value;
 }
@@ -91,7 +101,7 @@ function toggleDrawer() {
         </v-menu>
       </div>
     </v-app-bar>
-    
+
     <v-navigation-drawer v-model="isDrawerOpen" temporary>
       <v-list max-width="250">
         <v-list-item to="/patient/appointments" @click="isDrawerOpen = false">
