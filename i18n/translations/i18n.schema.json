@@ -76,6 +76,9 @@
     },
     "genericError": {
       "type": "string"
+    },
+    "logout": {
+      "type": "string"
     }
   },
   "required": [
@@ -103,6 +106,7 @@
     "dateOfBirth",
     "phoneNumber",
     "loginFailed",
-    "genericError"
+    "genericError",
+    "logout"
   ]
 }

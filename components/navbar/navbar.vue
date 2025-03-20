@@ -6,8 +6,15 @@ import { useAuthStore } from "@/stores/authStore";
 const authStore = useAuthStore();
 const { setLocale } = useI18n();
 const { current } = useLocale();
+const router = useRouter();
 const theme = useTheme();
 const isDrawerOpen = ref(false);
+
+// TODO: move this away from here.
+function logout() {
+  authStore.clearTokens();
+  router.push("/login");
+}
 
 onMounted(() => {
   const preferredTheme = localStorage.getItem("theme");
@@ -66,23 +73,12 @@ function toggleDrawer() {
         <v-icon>mdi-menu</v-icon>
       </v-btn>
       <v-app-bar-title class="text-truncate">
-        <v-btn @click="navigateTo('/')">
+        <v-btn @click="router.push('/')">
           {{ $t("hospitalName") }}
         </v-btn>
       </v-app-bar-title>
       <v-spacer />
       <div class="d-flex align-center gap-2">
-        <v-btn
-          v-if="authStore.isValidToken()"
-          variant="outlined"
-          :to="'/profile'"
-        >
-          <v-icon start>mdi-account-box</v-icon>
-          {{ $t("profile") }}
-        </v-btn>
-        <v-btn v-else color="primary" variant="outlined" :to="'/login'">
-          {{ $t("login") }}
-        </v-btn>
         <v-btn icon @click="toggleTheme">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
@@ -101,6 +97,16 @@ function toggleDrawer() {
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-btn v-if="authStore.isValidToken()" variant="text" :to="'/profile'">
+          <v-icon start>mdi-account-box</v-icon>
+          {{ $t("profile") }}
+        </v-btn>
+        <v-btn v-else color="primary" variant="text" :to="'/login'">
+          {{ $t("login") }}
+        </v-btn>
+        <v-btn v-if="!authStore.isValidToken()" variant="text" @click="logout">
+          {{ $t("logout") }}
+        </v-btn>
       </div>
     </v-app-bar>
 

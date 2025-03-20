@@ -25,5 +25,6 @@
   "phoneNumber": "Numero di telefono",
   "loginFailed": "Credenziali invalide, riprova.",
   "genericError": "Errore generico",
-  "profile": "Profilo"
+  "profile": "Profilo",
+  "logout": "Esci"
 }

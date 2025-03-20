@@ -25,5 +25,6 @@
   "phoneNumber": "Phone number",
   "loginFailed": "Invalid credentials, try again.",
   "genericError": "Generic error",
-  "profile": "Profile"
+  "profile": "Profile",
+  "logout": "Logout"
 }
