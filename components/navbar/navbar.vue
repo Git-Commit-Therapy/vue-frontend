@@ -97,15 +97,24 @@ function toggleDrawer() {
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-btn v-if="authStore.isValidToken()" variant="text" :to="'/profile'">
+        <v-btn v-if="authStore.isValidToken()" variant="text" @click="logout">
           <v-icon start>mdi-account-box</v-icon>
-          {{ $t("profile") }}
+          {{ $t("logout") }}
         </v-btn>
-        <v-btn v-else color="primary" variant="text" :to="'/login'">
+        <v-btn
+          v-else
+          color="primary"
+          variant="text"
+          @click="router.push('/login')"
+        >
           {{ $t("login") }}
         </v-btn>
-        <v-btn v-if="authStore.isValidToken()" variant="text" @click="logout">
-          {{ $t("logout") }}
+        <v-btn
+          v-if="authStore.isValidToken()"
+          variant="text"
+          @click="router.push('/profile')"
+        >
+          {{ $t("profile") }}
         </v-btn>
       </div>
     </v-app-bar>
