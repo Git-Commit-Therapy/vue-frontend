@@ -1,14 +1,10 @@
-<script setup>
-import { useAuthStore } from '@/stores/authStore'
-import { useRouter } from 'vue-router'
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
+import AuthGRPC from "~/composable/clients/authGrpcClient";
 
-const authStore = useAuthStore()
-const router = useRouter()
-
-const logout = () => {
-  authStore.clearToken()
-  router.push('/login')
-}
+const authStore = useAuthStore();
+const router = useRouter();
 </script>
 
 <template>
@@ -17,9 +13,7 @@ const logout = () => {
     <!--{{ authStore.patientData.patient }}
 
     {{ authStore.patientData.medicalInfo }}-->
-    <button @click="logout">Logout</button>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
