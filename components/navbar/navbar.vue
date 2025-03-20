@@ -104,7 +104,7 @@ function toggleDrawer() {
         <v-btn v-else color="primary" variant="text" :to="'/login'">
           {{ $t("login") }}
         </v-btn>
-        <v-btn v-if="!authStore.isValidToken()" variant="text" @click="logout">
+        <v-btn v-if="authStore.isValidToken()" variant="text" @click="logout">
           {{ $t("logout") }}
         </v-btn>
       </div>
