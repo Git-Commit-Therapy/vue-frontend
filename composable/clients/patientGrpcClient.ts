@@ -63,7 +63,7 @@ export default class PatientGRPC {
     const authStore = useAuthStore();
     const token = authStore.getAccessToken();
     if (!token) {
-      throw new Error("JWT is missing");
+      throw new Error("Error: JWT is missing.");
     }
     return createClientFactory()
       .use((call, options) =>
