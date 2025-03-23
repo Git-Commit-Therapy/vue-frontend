@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     },
     define: {
       AUTH_URL: JSON.stringify(process.env.AUTH_URL),
+      PATIENT_URL: JSON.stringify(process.env.PATIENT_URL),
     },
   },
 });
