@@ -187,11 +187,15 @@ async function handleSubmit() {
   }
 
   try {
+    console.log(JSON.stringify(values));
     const response: SignUpResponse = await authGRPC.signUp(
       values.fiscalCode,
       values.name,
       values.surname,
-      values.dateOfBirth,
+      // This is a workaround, for some reason we have to do it.
+      // We refuse to investigate further.
+      // TODO: remove the duplicate new call.
+      new Date(values.dateOfBirth),
       values.phoneNumber,
       values.email,
       values.password,
@@ -204,6 +208,7 @@ async function handleSubmit() {
       showError.value = true;
     }
   } catch (err: unknown) {
+    console.error(err);
     error.value = t("genericError");
     showError.value = true;
   }
