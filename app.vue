@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import NavBar from "@/components/navbar/navbar.vue";
 import { useAuthStore } from "@/stores/authStore";
 
 const authStore = useAuthStore();
 const validJWT = authStore.isValidToken();
 onBeforeMount(async () => {
-  authStore.setAuthUrl(AUTH_URL);
+  authStore.setAuthUrl(AUTH_URL as string);
 });
 </script>
 

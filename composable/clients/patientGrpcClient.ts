@@ -38,11 +38,18 @@ export default class PatientGRPC {
    * @param {string} url URL of the gRPC server (only used when creating a new instance).
    * @returns {PatientGRPC} The singleton instance.
    */
-  public static getInstance(url: string): PatientGRPC {
-    if (!PatientGRPC.instance) {
+  public static getInstance(url?: string): PatientGRPC {
+    if (!PatientGRPC.instance && !url)
+      throw new Error(
+        "PatientGRPC has not been initialized, usage: PatientGRPC.getInstance(url?)",
+      );
+    if (!PatientGRPC.instance && url) {
       PatientGRPC.instance = new PatientGRPC(url);
     }
-    return PatientGRPC.instance;
+
+    // Same as AuthGRPC, the compiler is not sure that the object is
+    // not null.
+    return PatientGRPC.instance!;
   }
 
   /**
@@ -56,7 +63,7 @@ export default class PatientGRPC {
     const authStore = useAuthStore();
     const token = authStore.getAccessToken();
     if (!token) {
-      throw new Error("JWT is missing");
+      throw new Error("Error: JWT is missing.");
     }
     return createClientFactory()
       .use((call, options) =>
