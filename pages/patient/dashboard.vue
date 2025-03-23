@@ -13,9 +13,9 @@ const goToPage = (page) => {
   <div>
     <h1>Dashboard</h1>
     <p>Welcome, {{ dataStore.nameSurname }}</p>
-    <button @click="goToPage('medical-exams')">Reports List</button>
-    <button @click="goToPage('medical-events')">Medical Events List</button>
-    <button @click="goToPage('appointments')">Appointments List</button>
+    <button @click="goToPage('patient/medical-exams')">Reports List</button>
+    <button @click="goToPage('patient/medical-events')">Medical Events List</button>
+    <button @click="goToPage('patient/appointments')">Appointments List</button>
   </div>
 </template>
 
