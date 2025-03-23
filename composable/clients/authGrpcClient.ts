@@ -31,7 +31,7 @@ export default class AuthGRPC {
   public static getInstance(url?: string): AuthGRPC {
     if (!AuthGRPC.instance && !url)
       throw new Error(
-        "AuthGRPC has not been initialized, usage: AuthGRPC.getInstance(url)",
+        "AuthGRPC has not been initialized, usage: AuthGRPC.getInstance(url?)",
       );
     if (!AuthGRPC.instance && url) {
       AuthGRPC.instance = new AuthGRPC(url);
