@@ -4,8 +4,10 @@ import { useAuthStore } from "@/stores/authStore";
 
 const authStore = useAuthStore();
 const validJWT = authStore.isValidToken();
+const config = useRuntimeConfig();
 onBeforeMount(async () => {
-  authStore.setAuthUrl(AUTH_URL as string);
+  console.log(config.public.authUrl)
+  authStore.setAuthUrl(config.public.authUrl as string);
 });
 </script>
 
