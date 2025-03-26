@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error: "Object is possibly undefined". This never happens, it's just typescript crying.
+        // @ts-expect-error: "Object is possibly undefined". This never hzappens, it's just typescript crying.
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
@@ -20,6 +20,12 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
+  runtimeConfig: {
+    public: {
+      authUrl: process.env.NUXT_AUTH_URL,
+      patientUrl: process.env.NUXT_PATIENT_URL,
+    },
+  },
   vite: {
     vue: {
       template: {
@@ -28,10 +34,7 @@ export default defineNuxtConfig({
     },
     server: {
       allowedHosts: [".sancommitto.local"],
-    },
-    define: {
-      AUTH_URL: JSON.stringify(process.env.AUTH_URL),
-      PATIENT_URL: JSON.stringify(process.env.PATIENT_URL),
+      cors: true,
     },
   },
 });
