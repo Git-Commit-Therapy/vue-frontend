@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      authUrl: process.env.AUTH_URL,
+      authUrl: process.env.NUXT_AUTH_URL,
       patientUrl: process.env.PATIENT_URL,
     },
   },
