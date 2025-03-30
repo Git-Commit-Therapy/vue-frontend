@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === "production") {
   env.AUTH_URL =
     (process.env.AUTH_URL as string) || "http://auth.sancommitto.local";
   env.PATIENTS_URL =
-    (process.env.PATIENT_URL as string) || "http://patients.sancommitto.local";
+    (process.env.PATIENTS_URL as string) || "http://patients.sancommitto.local";
 } else {
   env.AUTH_URL = process.env.AUTH_URL as string;
-  env.PATIENTS_URL = process.env.AUTH_URL as string;
+  env.PATIENTS_URL = process.env.PATIENTS_URL as string;
 }
 export default env;
