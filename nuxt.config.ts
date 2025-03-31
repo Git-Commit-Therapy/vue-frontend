@@ -1,8 +1,8 @@
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
   ssr: false,
+  compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   modules: [
     (_options, nuxt) => {
@@ -19,12 +19,6 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["vuetify"],
-  },
-  runtimeConfig: {
-    public: {
-      authUrl: process.env.NUXT_AUTH_URL,
-      patientUrl: process.env.NUXT_PATIENT_URL,
-    },
   },
   vite: {
     vue: {
