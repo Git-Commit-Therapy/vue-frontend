@@ -100,7 +100,7 @@ function validateForm(): boolean {
 
 /**
  * Handles login, if credentials are valid, navigates to dashboard,
- * else sets erorr message
+ * else sets error message.
  */
 async function handleSubmit() {
   if (!validateForm()) {
@@ -114,10 +114,7 @@ async function handleSubmit() {
     authStore.setAccessToken(response.accessToken);
     authStore.setRefreshToken(response.refreshToken);
     return navigateTo("/dashboard");
-  }
-  if (
-    [AuthStatus.UNRECOGNIZED, AuthStatus.FAIL].includes(response.loginStatus)
-  ) {
+  } else {
     error.value = t("loginFailed");
     showError.value = true;
   }
