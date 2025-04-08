@@ -1,3 +1,4 @@
+const config = useRuntimeConfig();
 interface Environment {
   AUTH_URL: string;
   PATIENTS_URL: string;
@@ -11,11 +12,16 @@ const env: Environment = { AUTH_URL: "", PATIENTS_URL: "" };
 // we have the variables that we need from the environment here.
 if (process.env.NODE_ENV === "production") {
   env.AUTH_URL =
-    (process.env.AUTH_URL as string) || "http://auth.sancommitto.local";
+    (process.env.AUTH_URL as string) ||
+    config.public.AUTH_URL ||
+    "http://auth.sancommitto.local";
   env.PATIENTS_URL =
-    (process.env.PATIENTS_URL as string) || "http://patients.sancommitto.local";
+    (process.env.PATIENTS_URL as string) ||
+    config.public.PATIENTS_URL ||
+    "http://patients.sancommitto.local";
 } else {
-  env.AUTH_URL = process.env.AUTH_URL as string;
-  env.PATIENTS_URL = process.env.PATIENTS_URL as string;
+  env.AUTH_URL = (process.env.AUTH_URL as string) || config.public.AUTH_URL;
+  env.PATIENTS_URL =
+    (process.env.PATIENTS_URL as string) || config.public.PATIENTS_URL;
 }
 export default env;
