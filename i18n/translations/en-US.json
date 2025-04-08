@@ -26,5 +26,6 @@
   "loginFailed": "Invalid credentials, try again.",
   "genericError": "Generic error",
   "profile": "Profile",
-  "logout": "Logout"
+  "logout": "Logout",
+  "appointments": "Appointments"
 }

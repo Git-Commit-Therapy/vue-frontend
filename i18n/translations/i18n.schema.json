@@ -79,6 +79,9 @@
     },
     "logout": {
       "type": "string"
+    },
+    "appointments": {
+      "type": "string"
     }
   },
   "required": [
@@ -107,6 +110,7 @@
     "phoneNumber",
     "loginFailed",
     "genericError",
-    "logout"
+    "logout",
+    "appointments"
   ]
 }

@@ -21,9 +21,8 @@ const patient: Patient = {
     email: "john.doe@example.com",
   },
 };
-// const patientMedicalInfo: GetMedicalInfoResponse =
+// const medicalInfo: GetMedicalInfoResponse =
 //   await patientGRPC.getAllMedicalInfo();
-// I hope that they're not obtained from a real database (gpt generated)
 const medicalInfo: MedicalInfo[] = [
   {
     medicalInfoId: 1,
@@ -68,23 +67,42 @@ const medicalInfo: MedicalInfo[] = [
     description: "Hypertension, requires regular monitoring",
   },
 ];
-const nameSurname: string = patient.user.name + " " + patient.user.surname;
+const nameSurname: string = patient.user!.name + " " + patient.user!.surname;
 </script>
 
 <template>
   <div>
     <h1>{{ $t("profile") }}</h1>
-    <v-card variant="outlined"></v-card>
-    <v-card-item>
-      <v-card-title>{{ nameSurname }}</v-card-title>
-    </v-card-item>
-    <!-- {{ patient.user?.name }} -->
 
-    <v-card-text>
-      <ol>
-        <li v-for="info in medicalInfo">{{ info.description }}</li>
-      </ol>
-    </v-card-text>
+    <!-- TODO: do not use this as a trick for a bold line -->
+    <v-card variant="outlined"></v-card>
+    <v-card variant="flat" class="overflow-y-auto" max-height="400">
+      <v-card-item>
+        <v-card-title>{{ nameSurname }} </v-card-title>
+      </v-card-item>
+      <v-card-item>
+        <v-btn
+          prepend-icon="mdi-calendar-month"
+          @click="navigateTo('/patient/appointments')"
+          >{{ t("appointments") }}</v-btn
+        >
+      </v-card-item>
+      <v-card-text>
+        <v-timeline align="start" density="compact">
+          <v-timeline-item
+            v-for="info in medicalInfo"
+            :key="info.medicalInfoId"
+            size="x-small"
+          >
+            <div class="mb-4">
+              <div class="font-weight-normal">
+                <strong>{{ info.description }}</strong>
+              </div>
+            </div>
+          </v-timeline-item>
+        </v-timeline>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 

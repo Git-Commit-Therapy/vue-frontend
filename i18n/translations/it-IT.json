@@ -26,5 +26,6 @@
   "loginFailed": "Credenziali invalide, riprova.",
   "genericError": "Errore generico",
   "profile": "Profilo",
-  "logout": "Esci"
+  "logout": "Esci",
+  "appointments": "Appuntamenti"
 }
