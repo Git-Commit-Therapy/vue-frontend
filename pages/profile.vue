@@ -4,12 +4,12 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRouter, type Router } from "vue-router";
 import AuthGRPC from "@/composable/clients/authGrpcClient";
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
-import type { GetMedicalInfoResponse } from "~/composable/protobuf/frontend/patient_services";
+import type { GetMedicalInfoResponse } from "@/composable/protobuf/frontend/patient_services";
 import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const authStore = useAuthStore();
 const router: Router = useRouter();
 const { t } = useI18n();
-// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(PATIENT_URL);
+// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 // const patient: Patient = await patientGRPC.getPatient();
 const patient: Patient = {
   user: {
@@ -72,7 +72,7 @@ const nameSurname: string = patient.user!.name + " " + patient.user!.surname;
 
 <template>
   <div>
-    <h1>{{ $t("profile") }}</h1>
+    <h1>{{ t("profile") }}</h1>
 
     <!-- TODO: do not use this as a trick for a bold line -->
     <v-card variant="outlined"></v-card>
@@ -95,9 +95,7 @@ const nameSurname: string = patient.user!.name + " " + patient.user!.surname;
             size="x-small"
           >
             <div class="mb-4">
-              <div class="font-weight-normal">
-                <strong>{{ info.description }}</strong>
-              </div>
+              <strong>{{ info.description }}</strong>
             </div>
           </v-timeline-item>
         </v-timeline>
