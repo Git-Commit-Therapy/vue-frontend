@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NavBar from "@/components/navbar/navbar.vue";
+import NavBar from "@/components/navbar/Navbar.vue";
 import { useAuthStore } from "@/stores/authStore";
 import env from "@/utils/env";
 import AuthGRPC from "@/composable/clients/authGrpcClient";
