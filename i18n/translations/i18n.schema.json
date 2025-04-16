@@ -82,6 +82,9 @@
     },
     "appointments": {
       "type": "string"
+    },
+    "noAppointments": {
+      "type": "string"
     }
   },
   "required": [
@@ -111,6 +114,7 @@
     "loginFailed",
     "genericError",
     "logout",
-    "appointments"
+    "appointments",
+    "noAppointments"
   ]
 }

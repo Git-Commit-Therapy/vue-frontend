@@ -27,5 +27,6 @@
   "genericError": "Errore generico",
   "profile": "Profilo",
   "logout": "Esci",
-  "appointments": "Appuntamenti"
+  "appointments": "Appuntamenti",
+  "noAppointments": "Non hai alcun appuntamento prenotato."
 }

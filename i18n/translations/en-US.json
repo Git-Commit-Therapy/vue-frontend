@@ -27,5 +27,6 @@
   "genericError": "Generic error",
   "profile": "Profile",
   "logout": "Logout",
-  "appointments": "Appointments"
+  "appointments": "Appointments",
+  "noAppointments": "You currently have no appointments."
 }

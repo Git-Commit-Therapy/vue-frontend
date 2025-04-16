@@ -130,6 +130,8 @@ const patientAppointments: GetAppointmentsResponse = {
     },
   ],
 };
+
+patientAppointments.appointments = [];
 </script>
 
 <template>
@@ -138,7 +140,7 @@ const patientAppointments: GetAppointmentsResponse = {
   </h1>
   <v-card variant="outlined"></v-card>
   <v-card variant="flat" class="overflow-y-auto" max-height="400">
-    <v-card-text>
+    <v-card-text v-if="patientAppointments.appointments.length > 0">
       <v-timeline align="start" density="compact">
         <v-timeline-item
           v-for="appointment in patientAppointments.appointments"
@@ -156,6 +158,7 @@ const patientAppointments: GetAppointmentsResponse = {
         </v-timeline-item>
       </v-timeline>
     </v-card-text>
+    <v-card-text v-else>{{ t("noAppointments") }}</v-card-text>
   </v-card>
 </template>
 
