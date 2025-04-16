@@ -4,7 +4,6 @@ import { useAuthStore } from "@/stores/authStore";
 import env from "@/utils/env";
 import AuthGRPC from "@/composable/clients/authGrpcClient";
 const authStore = useAuthStore();
-const config = useRuntimeConfig();
 onBeforeMount(async () => {
   authStore.setAuthUrl(env.AUTH_URL);
   AuthGRPC.getInstance(authStore.getAuthUrl());
