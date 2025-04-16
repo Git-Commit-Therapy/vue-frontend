@@ -2,6 +2,7 @@
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
 import env from "@/utils/env";
 import type { GetAppointmentsResponse } from "@/composable/protobuf/frontend/employee_services";
+import { formatDateTime } from "@/utils/date-format";
 const { t } = useI18n();
 // const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 // const patientAppointments = await patientGRPC.getAppointments();
@@ -145,7 +146,12 @@ const patientAppointments: GetAppointmentsResponse = {
           size="x-small"
         >
           <div class="mb-4">
-            <strong>{{ appointment.dateTime }}</strong>
+            <strong
+              >{{ formatDateTime(appointment.dateTime!) }} @
+              {{ appointment.doctor?.user?.name }}
+              {{ appointment.doctor?.user?.surname }},
+              {{ appointment.doctor?.ward?.name }}
+            </strong>
           </div>
         </v-timeline-item>
       </v-timeline>
