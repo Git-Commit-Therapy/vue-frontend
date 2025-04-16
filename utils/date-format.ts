@@ -9,5 +9,5 @@ import { enUS, it } from "date-fns/locale";
  */
 export function formatDateTime(date: Date): string {
   const currentLocale = useI18n().locale.value === "it" ? it : enUS;
-  return format(date, "PPPpp", { locale: currentLocale });
+  return format(date, "PPPp", { locale: currentLocale });
 }
