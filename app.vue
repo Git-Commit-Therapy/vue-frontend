@@ -7,6 +7,7 @@ const authStore = useAuthStore();
 onBeforeMount(async () => {
   authStore.setAuthUrl(env.AUTH_URL);
   AuthGRPC.getInstance(authStore.getAuthUrl());
+  authStore.startTokenRefresh();
 });
 </script>
 
