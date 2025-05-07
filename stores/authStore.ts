@@ -48,6 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
     refreshToken.value = "";
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    stopTokenRefresh();
   }
 
   /**
@@ -71,26 +72,27 @@ export const useAuthStore = defineStore("auth", () => {
    * Starts the token refresh mechanism, refreshing every 15 seconds.
    */
   function startTokenRefresh(): void {
-    if(authGRPC === null){
+    if (authGRPC === null) {
       authGRPC = AuthGRPC.getInstance(getAuthUrl());
     }
-    if (refreshInterval) return; 
+    if (refreshInterval) return;
     refreshInterval = setInterval(async () => {
       try {
-        const currentRefreshToken : string = getRefreshToken();
+        const currentRefreshToken: string = getRefreshToken();
         if (!currentRefreshToken) {
           //Nothing to refresh
           return;
         }
-        const response: RefreshTokenResponse | undefined =  await authGRPC?.refreshToken(currentRefreshToken);
-        if(response) {
+        const response: RefreshTokenResponse | undefined =
+          await authGRPC?.refreshToken(currentRefreshToken);
+        if (response) {
           setAccessToken(response.accessToken);
           setRefreshToken(response.refreshToken);
         }
       } catch (error) {
         console.error("Error refreshing token:", error);
       }
-    }, 15000); 
+    }, 15000);
   }
 
   /**
