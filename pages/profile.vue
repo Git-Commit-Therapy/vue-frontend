@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { Patient } from "@/composable/protobuf/frontend/user";
-import { useAuthStore } from "@/stores/authStore";
-import { useRouter, type Router } from "vue-router";
-import AuthGRPC from "@/composable/clients/authGrpcClient";
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
-import type { GetMedicalInfoResponse } from "@/composable/protobuf/frontend/patient_services";
 import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
-const authStore = useAuthStore();
-const router: Router = useRouter();
 const { t } = useI18n();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 const patient: Patient = await patientGRPC.getPatient();
