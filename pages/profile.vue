@@ -5,7 +5,6 @@ import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const { t } = useI18n();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 const patient: Patient = await patientGRPC.getPatient();
-console.log(patient);
 const medicalInfo: MedicalInfo[] = (await patientGRPC.getAllMedicalInfo())
   .medicalInfo;
 const nameSurname: string = patient.user!.name + " " + patient.user!.surname;

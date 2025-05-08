@@ -20,7 +20,7 @@ import { Patient } from "@/composable/protobuf/frontend/user";
 import { MedicalExam } from "@/composable/protobuf/frontend/medical_exam";
 import { useAuthStore } from "@/stores/authStore";
 
-/** Class representing all the services of a patient in a singleton pattern*/
+/** Class representing all the services of a patient in a singleton pattern */
 export default class PatientGRPC {
   private static instance: PatientGRPC | null = null;
   private readonly grpcConnection: PatientServicesClient;
@@ -64,6 +64,9 @@ export default class PatientGRPC {
     const token = authStore.getAccessToken();
     if (!token) {
       throw new Error("Error: JWT is missing.");
+    }
+    if (!authStore.isValidToken()) {
+      throw new Error("Error: JWT is invalid.");
     }
     return createClientFactory()
       .use((call, options) =>
