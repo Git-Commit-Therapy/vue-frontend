@@ -100,7 +100,7 @@ function validateForm(): boolean {
 
 /**
  * Handles login, if credentials are valid, navigates to dashboard,
- * else sets erorr message
+ * else sets error message.
  */
 async function handleSubmit() {
   if (!validateForm()) {
@@ -113,11 +113,8 @@ async function handleSubmit() {
   if (response.loginStatus === AuthStatus.SUCCESS) {
     authStore.setAccessToken(response.accessToken);
     authStore.setRefreshToken(response.refreshToken);
-    return navigateTo("/dashboard");
-  }
-  if (
-    [AuthStatus.UNRECOGNIZED, AuthStatus.FAIL].includes(response.loginStatus)
-  ) {
+    return navigateTo("/profile");
+  } else {
     error.value = t("loginFailed");
     showError.value = true;
   }
@@ -147,7 +144,7 @@ async function handleSubmit() {
               <v-col cols="12">
                 <v-text-field
                   v-model="values.fiscalCode"
-                  label="Fiscal Code"
+                  :label="t('fiscalCode')"
                   :error-messages="
                     touched.fiscalCode && errors.fiscalCode
                       ? errors.fiscalCode
@@ -175,14 +172,14 @@ async function handleSubmit() {
 
               <v-col cols="12">
                 <v-btn color="primary" type="submit" block size="large">
-                  {{ $t("login") }}
+                  {{ t("login") }}
                 </v-btn>
               </v-col>
             </v-row>
           </v-container>
         </form>
         <div class="text-center mt-4">
-          <NuxtLink to="/signup">{{ $t("noAccount") }}</NuxtLink>
+          <NuxtLink to="/signup">{{ t("noAccount") }}</NuxtLink>
         </div>
       </v-card-text>
     </v-card>

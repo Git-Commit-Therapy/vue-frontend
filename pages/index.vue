@@ -1,17 +1,15 @@
-<script setup>
-
+<script setup lang="ts">
+const { t } = useI18n();
 </script>
-
 
 <template>
   <div>
-    <h1 style="font-size: 3em;">Hospital San Commito</h1>
+    <h1 style="font-size: 3em">{{ t("hospitalName") }}</h1>
     <router-link to="/login">
-      <button>Login</button>
+      <button>{{ t("login") }}</button>
     </router-link>
   </div>
 </template>
 
+<style lang="scss"></style>
 
-<style lang="scss">
-</style>

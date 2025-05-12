@@ -13,5 +13,5 @@ ENV NITRO_PORT=80
 COPY --from=builder /app/.output /app/.output
 COPY --from=builder /app/package.json ./
 EXPOSE 80
-CMD ["node", ".output/server/index.mjs"]
+CMD ["sh", "-c", "node .output/server/index.mjs"]
 LABEL org.opencontainers.image.source=https://github.com/Git-Commit-Therapy/vue-frontend

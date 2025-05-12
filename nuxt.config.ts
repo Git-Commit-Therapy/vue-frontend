@@ -20,6 +20,13 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
+  runtimeConfig: {
+    public: {
+      AUTH_URL: process.env.AUTH_URL,
+      PATIENTS_URL: process.env.PATIENTS_URL,
+      EMPLOYEES_URL: process.env.EMPLOYEES_URL,
+    },
+  },
   vite: {
     vue: {
       template: {

@@ -20,7 +20,7 @@ import { Patient } from "@/composable/protobuf/frontend/user";
 import { MedicalExam } from "@/composable/protobuf/frontend/medical_exam";
 import { useAuthStore } from "@/stores/authStore";
 
-/** Class representing all the services of a patient in a singleton pattern*/
+/** Class representing all the services of a patient in a singleton pattern */
 export default class PatientGRPC {
   private static instance: PatientGRPC | null = null;
   private readonly grpcConnection: PatientServicesClient;
@@ -65,6 +65,9 @@ export default class PatientGRPC {
     if (!token) {
       throw new Error("Error: JWT is missing.");
     }
+    if (!authStore.isValidToken()) {
+      throw new Error("Error: JWT is invalid.");
+    }
     return createClientFactory()
       .use((call, options) =>
         call.next(call.request, {
@@ -88,13 +91,13 @@ export default class PatientGRPC {
 
   /**
    * Gets the patient's appointments.
-   * @param {Date|undefined} fromDate Starting date.
-   * @param {Date|undefined} toDate Ending date.
+   * @param {Date|undefined} fromDate Optional Starting date.
+   * @param {Date|undefined} toDate Optional Ending date.
    * @returns {Promise<GetAppointmentsResponse>} Promise that when fulfilled contains the appointments matching the request.
    */
   getAppointments(
-    fromDate: Date | undefined,
-    toDate: Date | undefined,
+    fromDate?: Date,
+    toDate?: Date,
   ): Promise<GetAppointmentsResponse> {
     return this.grpcConnection.getAppointments(
       GetAppointmentsRequest.create({ fromDate, toDate }),
@@ -111,13 +114,13 @@ export default class PatientGRPC {
 
   /**
    * Gets all patient's medical events.
-   * @param {Date|undefined} fromDate Starting date.
-   * @param {Date|undefined} toDate Ending date.
+   * @param {Date|undefined} fromDate Optional Starting date.
+   * @param {Date|undefined} toDate Optional Ending date.
    * @returns {Promise<GetAllMedicalEventResponse>} Promise that when fulfilled contains all the patient's medical events.
    */
   getAllMedicalEvent(
-    fromDate: Date | undefined,
-    toDate: Date | undefined,
+    fromDate?: Date,
+    toDate?: Date,
   ): Promise<GetAllMedicalEventResponse> {
     return this.grpcConnection.getAllMedicalEvent(
       GetAllMedicalEventRequest.create({ fromDate, toDate }),
@@ -126,13 +129,13 @@ export default class PatientGRPC {
 
   /**
    * Gets all patient's medical exams.
-   * @param {Date|undefined} fromDate Starting date.
-   * @param {Date|undefined} toDate Ending date.
+   * @param {Date|undefined} fromDate Optional Starting date.
+   * @param {Date|undefined} toDate Optional Ending date.
    * @returns {Promise<GetAllMedicalExamResponse>} Promise that when fulfilled contains all the patient's medical exams.
    */
   getAllMedicalExam(
-    fromDate: Date | undefined,
-    toDate: Date | undefined,
+    fromDate?: Date,
+    toDate?: Date,
   ): Promise<GetAllMedicalExamResponse> {
     return this.grpcConnection.getAllMedicalExam(
       GetAllMedicalExamRequest.create({ fromDate, toDate }),
@@ -147,6 +150,6 @@ export default class PatientGRPC {
   getMedicalExamDetails(
     exam: MedicalExam,
   ): Promise<GetMedicalExamDetailsResponse> {
-    return this.grpcConnection.getMedicalExamDetails(MedicalExam.create(exam));
+    return this.grpcConnection.getMedicalExamDetails(exam);
   }
 }
