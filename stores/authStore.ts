@@ -3,7 +3,7 @@ import jwtDecode from "jwt-decode";
 import AuthGRPC from "~/composable/clients/authGrpcClient";
 import type { RefreshTokenResponse } from "~/composable/protobuf/frontend/auth_services";
 
-interface AuthToken {
+export interface AuthToken {
   exp: number;
   [key: string]: unknown;
 }
