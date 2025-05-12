@@ -27,7 +27,7 @@ import type {
 enum EmployeeType {
   DOCTOR,
   STAFF,
-  OTHER = -1,
+  UNKNOWN = -1,
 }
 
 /** Class representing employee-related gRPC services using a singleton pattern. */
@@ -35,8 +35,7 @@ export default class EmployeeGRPC {
   private static instance: EmployeeGRPC | null = null;
   private readonly grpcConnection: EmployeeServicesClient;
 
-  // TODO: set correct type on init
-  private type: EmployeeType = EmployeeType.OTHER;
+  private type: EmployeeType = EmployeeType.UNKNOWN;
 
   /**
    * Private constructor to prevent direct construction calls with 'new'.
@@ -44,6 +43,11 @@ export default class EmployeeGRPC {
    */
   private constructor(url: string) {
     this.grpcConnection = this.createEmployeesGrpcClient(url);
+    const tmpRoles: string[] = getUserRoles(useAuthStore().getAccessToken());
+    if (tmpRoles.includes("staff")) this.type = EmployeeType.STAFF;
+    if (tmpRoles.includes("doctor")) this.type = EmployeeType.DOCTOR;
+    // But what if a user has multiple roles? Is it even possible?
+    // TODO: check if possible
   }
 
   /**
@@ -168,5 +172,13 @@ export default class EmployeeGRPC {
    */
   editStaff(newStaffDetails: Staff): Promise<ModifyStaffResponse> {
     return this.grpcConnection.modifyStaff(newStaffDetails);
+  }
+
+  isStaff(): boolean {
+    return this.type === EmployeeType.STAFF;
+  }
+
+  isDoctor(): boolean {
+    return this.type === EmployeeType.DOCTOR;
   }
 }
