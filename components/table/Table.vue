@@ -1,98 +1,44 @@
 <script setup lang="ts">
-const props = defineProps({
-  header: {
-    type: Array,
-    required: true,
-    // Example: [{ key: 'name', label: 'Name' }, { key: 'role', label: 'Role' }]
-  },
-  data: {
-    type: Array,
-    required: true,
-  },
-  executeFunction: {
-    type: Function,
-    required: false,
-  },
-  buttonLabel: {
-    type: String,
-    required: false,
-  },
-});
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { header, data, executeFunction, buttonLabel } = props;
-const sortKey = ref("");
-const sortOrder = ref(1);
+const props = defineProps<{
+  header: { key: string; label: string }[];
+  data: Record<string, any>[];
+  executeFunction?: (row: Record<string, any>) => void;
+  buttonLabel?: string;
+}>();
 
-const sortedData = computed(() => {
-  if (!sortKey.value) return data;
-  return [...data].sort((a, b) => {
-    const aValue = a[sortKey.value];
-    const bValue = b[sortKey.value];
-    if (aValue < bValue) return -1 * sortOrder.value;
-    if (aValue > bValue) return 1 * sortOrder.value;
-    return 0;
-  });
-});
+const { t } = useI18n();
 
-const sortBy = (key) => {
-  if (sortKey.value === key) {
-    sortOrder.value *= -1;
-  } else {
-    sortKey.value = key;
-    sortOrder.value = 1;
-  }
-};
+const sortBy = ref<{ key: string; order: boolean }[]>([]);
+const sortDesc = ref(false);
+
+const headers = computed(() =>
+  props.header.map((h) => ({
+    text: t(h.label),
+    value: h.key,
+    sortable: true,
+  })),
+);
+if (props.executeFunction) {
+  headers.value.push({ text: "", value: "actions", sortable: false });
+}
 </script>
 
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th v-for="col in header" :key="col.key" @click="sortBy(col.key)">
-          {{ col.label }}
-          <span v-if="sortKey === col.key">{{
-            sortOrder === 1 ? "▲" : "▼"
-          }}</span>
-        </th>
-        <th v-if="executeFunction"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="(row, index) in sortedData"
-        :key="row.id"
-        :class="{ 'alt-row': index % 2 === 1 }"
-      >
-        <td v-for="col in header" :key="col.key">{{ row[col.key] }}</td>
-        <td v-if="executeFunction">
-          <button @click="executeFunction(row)">
-            {{ buttonLabel || "Execute" }}
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <v-data-table
+    :headers="headers"
+    :items="data"
+    :sort-by.sync="sortBy"
+    :sort-desc.sync="sortDesc"
+    class="elevation-1"
+    item-value="id"
+  >
+    <template v-slot:item.actions="{ item }" v-if="executeFunction">
+      <v-btn color="primary" @click="() => executeFunction?.(item)">
+        {{ buttonLabel }}
+      </v-btn>
+    </template>
+  </v-data-table>
 </template>
-
-<style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-th {
-  background-color: #f2f2f2;
-  text-align: left;
-  cursor: pointer;
-}
-
-.alt-row {
-  background-color: #f9f9f9;
-}
-</style>
