@@ -11,6 +11,7 @@ import {
   EmployeeServicesDefinition,
   GetAllDoctorsResponse,
   GetAllPatientsResponse,
+  GetAllStaffsResponse,
   GetAllWardResponse,
   ModifyDoctorResponse,
   ModifyPatientResponse,
@@ -118,6 +119,14 @@ export default class EmployeeGRPC {
    */
   getAllWards(): Promise<GetAllWardResponse> {
     return this.grpcConnection.getAllWard({});
+  }
+
+  /**
+   * Retrieves all staff.
+   * @returns {Promise<GetAllWardResponse>} Promise resolving to the list of staff.
+   */
+  getAllStaff(): Promise<GetAllStaffsResponse> {
+    return this.grpcConnection.getAllStaffs({});
   }
 
   /**
