@@ -2,90 +2,60 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "firstName": {
-      "type": "string"
-    },
-    "lastName": {
-      "type": "string"
-    },
-    "hospitalName": {
-      "type": "string"
-    },
-    "fiscalCode": {
-      "type": "string"
-    },
-    "email": {
-      "type": "string"
-    },
-    "password": {
-      "type": "string"
-    },
-    "confirmPassword": {
-      "type": "string"
-    },
-    "login": {
-      "type": "string"
-    },
-    "signUp": {
-      "type": "string"
-    },
-    "loginTitle": {
-      "type": "string"
-    },
-    "signUpTitle": {
-      "type": "string"
-    },
-    "forgottenPassword": {
-      "type": "string"
-    },
-    "noAccount": {
-      "type": "string"
-    },
-    "haveAccount": {
-      "type": "string"
-    },
-    "required": {
-      "type": "string"
-    },
-    "wrongFormat": {
-      "type": "string"
-    },
-    "languageError": {
-      "type": "string"
-    },
-    "visitList": {
-      "type": "string"
-    },
-    "reportList": {
-      "type": "string"
-    },
-    "invalidPassword": {
-      "type": "string"
-    },
-    "passwordMatch": {
-      "type": "string"
-    },
-    "dateOfBirth": {
-      "type": "string"
-    },
-    "phoneNumber": {
-      "type": "string"
-    },
-    "loginFailed": {
-      "type": "string"
-    },
-    "genericError": {
-      "type": "string"
-    },
-    "logout": {
-      "type": "string"
-    },
-    "appointments": {
-      "type": "string"
-    },
-    "noAppointments": {
-      "type": "string"
-    }
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "hospitalName": { "type": "string" },
+    "fiscalCode": { "type": "string" },
+    "email": { "type": "string" },
+    "password": { "type": "string" },
+    "confirmPassword": { "type": "string" },
+    "login": { "type": "string" },
+    "signUp": { "type": "string" },
+    "loginTitle": { "type": "string" },
+    "signUpTitle": { "type": "string" },
+    "forgottenPassword": { "type": "string" },
+    "noAccount": { "type": "string" },
+    "haveAccount": { "type": "string" },
+    "required": { "type": "string" },
+    "wrongFormat": { "type": "string" },
+    "languageError": { "type": "string" },
+    "visitList": { "type": "string" },
+    "reportList": { "type": "string" },
+    "invalidPassword": { "type": "string" },
+    "passwordMatch": { "type": "string" },
+    "dateOfBirth": { "type": "string" },
+    "phoneNumber": { "type": "string" },
+    "loginFailed": { "type": "string" },
+    "genericError": { "type": "string" },
+    "logout": { "type": "string" },
+    "appointments": { "type": "string" },
+    "noAppointments": { "type": "string" },
+    "filterPlaceholder": { "type": "string" },
+    "newDoctor": { "type": "string" },
+    "editDoctor": { "type": "string" },
+    "edit": { "type": "string" },
+    "specialization": { "type": "string" },
+    "officePhone": { "type": "string" },
+    "ward": { "type": "string" },
+    "save": { "type": "string" },
+    "cancel": { "type": "string" },
+    "profile": { "type": "string" },
+    "medicalExams": { "type": "string" },
+    "doctor": { "type": "string" },
+    "noMedicalExams": { "type": "string" },
+    "errorFetchingMedicalExams": { "type": "string" },
+    "medicalEvents": { "type": "string" },
+    "noMedicalEvents": { "type": "string" },
+    "errorFetchingMedicalEvents": { "type": "string" },
+    "fetchEvents": { "type": "string" },
+    "inspectEvent": { "type": "string" },
+    "hideDetails": { "type": "string" },
+    "severityCode": { "type": "string" },
+    "dischargeLetter": { "type": "string" },
+    "relatedExams": { "type": "string" },
+    "examType": { "type": "string" },
+    "unknown": { "type": "string" },
+    "viewExam": { "type": "string" }
   },
   "required": [
     "firstName",
@@ -115,6 +85,32 @@
     "genericError",
     "logout",
     "appointments",
-    "noAppointments"
+    "noAppointments",
+    "filterPlaceholder",
+    "newDoctor",
+    "edit",
+    "editDoctor",
+    "specialization",
+    "officePhone",
+    "ward",
+    "save",
+    "cancel",
+    "profile",
+    "medicalExams",
+    "doctor",
+    "noMedicalExams",
+    "errorFetchingMedicalExams",
+    "medicalEvents",
+    "noMedicalEvents",
+    "errorFetchingMedicalEvents",
+    "fetchEvents",
+    "inspectEvent",
+    "hideDetails",
+    "severityCode",
+    "dischargeLetter",
+    "relatedExams",
+    "examType",
+    "unknown",
+    "viewExam"
   ]
 }

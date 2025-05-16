@@ -46,5 +46,16 @@
   "relatedExams": "Related Exams",
   "examType": "Exam Type",
   "unknown": "Unknown",
-  "viewExam": "View Exam"
+  "viewExam": "View Exam",
+  "edit": "Edit",
+  "newDoctor": "New Doctor",
+  "editDoctor": "Edit Doctor",
+  "officePhone": "Office Phone",
+  "actions": "Actions",
+  "save": "Save",
+  "cancel": "Cancel",
+  "successMessage": "Changes saved successfully.",
+  "errorMessage": "An error occurred while saving changes.",
+  "manageDoctors": "Manage Doctors",
+  "filterPlaceholder": "Filter"
 }
