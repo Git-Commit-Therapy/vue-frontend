@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import type { Doctor } from "~/composable/protobuf/frontend/user";
 import type { Ward } from "~/composable/protobuf/frontend/ward";
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+//const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const { t } = useI18n();
 
 const doctorList = ref([] as Doctor[]);
@@ -13,8 +13,81 @@ const selectedEntity = ref<any>(null);
 const allWards = ref([] as Ward[]);
 
 onMounted(async () => {
-  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
-  allWards.value = (await employeeGRPC.getAllWards()).ward;
+  //  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
+  // allWards.value = (await employeeGRPC.getAllWards()).ward;
+
+  allWards.value = [
+    { wardId: 1, name: "Cardiology" },
+    { wardId: 2, name: "Neurology" },
+    { wardId: 3, name: "Pediatrics" },
+  ];
+  doctorList.value = [
+    {
+      user: {
+        id: "u001",
+        name: "Alice",
+        surname: "Smith",
+        birthDate: new Date("1980-05-12"),
+        phoneNumber: "555-1234",
+        email: "alice.smith@hospital.org",
+      },
+      medSpecialization: "Cardiologist",
+      officePhoneNumber: "555-1001",
+      ward: allWards.value[0],
+    },
+    {
+      user: {
+        id: "u002",
+        name: "Bob",
+        surname: "Allen",
+        birthDate: new Date("1975-09-20"),
+        phoneNumber: "555-5678",
+        email: "bob.allen@hospital.org",
+      },
+      medSpecialization: "Neurologist",
+      officePhoneNumber: "555-1002",
+      ward: allWards.value[1],
+    },
+    {
+      user: {
+        id: "u003",
+        name: "Carol",
+        surname: "Nguyen",
+        birthDate: new Date("1988-03-15"),
+        phoneNumber: "555-7890",
+        email: "carol.nguyen@hospital.org",
+      },
+      medSpecialization: "Pediatrician",
+      officePhoneNumber: "555-1003",
+      ward: allWards.value[2],
+    },
+    {
+      user: {
+        id: "u004",
+        name: "David",
+        surname: "Lee",
+        birthDate: new Date("1990-11-02"),
+        phoneNumber: "555-3456",
+        email: "david.lee@hospital.org",
+      },
+      medSpecialization: "Orthopedic Surgeon",
+      officePhoneNumber: "555-1004",
+      ward: allWards.value[0],
+    },
+    {
+      user: {
+        id: "u005",
+        name: "Elena",
+        surname: "Martinez",
+        birthDate: new Date("1982-07-28"),
+        phoneNumber: "555-6543",
+        email: "elena.martinez@hospital.org",
+      },
+      medSpecialization: "Neurologist",
+      officePhoneNumber: "555-1005",
+      ward: allWards.value[1],
+    },
+  ];
 });
 
 const filteredDoctorList = computed(() =>
@@ -27,12 +100,12 @@ const filteredDoctorList = computed(() =>
     .map((d) => d.user),
 );
 
-const headers = [
-  { text: t("name"), value: "name", sortable: true },
-  { text: t("surname"), value: "surname", sortable: true },
-  { text: t("birthDate"), value: "birthDate", sortable: true },
-  { text: "", value: "actions", sortable: false },
-];
+const headers = computed(() => [
+  { text: t("firstName"), value: "name", sortable: true },
+  { text: t("lastName"), value: "surname", sortable: true },
+  { text: t("dateOfBirth"), value: "birthDate", sortable: true },
+  { text: t("actions"), value: "actions", sortable: false },
+]).value;
 
 const editEntity = (user: any) => {
   selectedEntity.value = doctorList.value.find((d) => d.user!.id === user.id);
@@ -58,6 +131,7 @@ const newEntity = () => {
 };
 
 const saveEntity = async () => {
+  /*
   const fn = selectedEntity.value.isNew
     ? employeeGRPC.createDoctor
     : employeeGRPC.editDoctor;
@@ -71,6 +145,7 @@ const saveEntity = async () => {
       t("errorMessage") + (response?.message ? ": " + response.message : ""),
     );
   }
+  */
 };
 
 const isSaveDisabled = computed(() => {
@@ -141,32 +216,32 @@ const isSaveDisabled = computed(() => {
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="selectedEntity.user.name"
-                :label="t('name')"
+                :label="t('firstName')"
               />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="selectedEntity.user.surname"
-                :label="t('surname')"
+                :label="t('lastName')"
               />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="selectedEntity.user.birthDate"
-                :label="t('birthDate')"
+                :label="t('dateOfBirth')"
                 type="date"
               />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="selectedEntity.user.phoneNumber"
-                :label="t('phone')"
+                :label="t('phoneNumber')"
               />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="selectedEntity.user.email"
-                :label="t('email')"
+                label="E-mail"
               />
             </v-col>
             <v-col cols="12" md="6">
