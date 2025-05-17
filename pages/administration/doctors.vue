@@ -101,10 +101,10 @@ const filteredDoctorList = computed(() =>
 );
 
 const headers = computed(() => [
-  { text: t("firstName"), value: "name", sortable: true },
-  { text: t("lastName"), value: "surname", sortable: true },
-  { text: t("dateOfBirth"), value: "birthDate", sortable: true },
-  { text: t("actions"), value: "actions", sortable: false },
+  { title: t("firstName"), value: "name", sortable: true },
+  { title: t("lastName"), value: "surname", sortable: true },
+  { title: t("dateOfBirth"), value: "birthDate", sortable: true },
+  { title: t("actions"), value: "actions", sortable: false },
 ]).value;
 
 const editEntity = (user: any) => {
