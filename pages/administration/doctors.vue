@@ -18,8 +18,13 @@ function hideError() {
   showError.value = false;
 }
 onMounted(async () => {
-  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
-  allWards.value = (await employeeGRPC.getAllWards()).ward;
+  try {
+    doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
+    allWards.value = (await employeeGRPC.getAllWards()).ward;
+  } catch (err) {
+    error.value = t("unexpectedError");
+    showError.value = true;
+  }
 });
 
 const filteredDoctorList = computed(() =>
