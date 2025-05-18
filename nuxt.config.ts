@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error: "Object is possibly undefined". This never hzappens, it's just typescript crying.
+        // @ts-expect-error: "Object is possibly undefined". This never happens, it's just typescript crying.
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },

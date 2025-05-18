@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useLocale, useTheme } from "vuetify";
 import { useAuthStore } from "@/stores/authStore";
+import { getUserRoles } from "~/utils/user-roles";
 
 const authStore = useAuthStore();
 const { setLocale } = useI18n();
@@ -10,10 +11,13 @@ const router = useRouter();
 const theme = useTheme();
 const isDrawerOpen = ref(false);
 
-// TODO: move this away from here.
 function logout() {
   authStore.clearTokens();
   router.push("/login");
+}
+
+function hasRole(role: string): boolean {
+  return getUserRoles(authStore.getAccessToken()).includes(role);
 }
 
 onMounted(() => {
@@ -121,18 +125,68 @@ function toggleDrawer() {
 
     <v-navigation-drawer v-model="isDrawerOpen" temporary>
       <v-list max-width="250">
-        <v-list-item to="/patient/appointments" @click="isDrawerOpen = false">
-          <template v-slot:prepend>
-            <v-icon>mdi-medical-bag</v-icon>
-          </template>
-          <v-list-item-title>{{ $t("visitList") }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/patient/medical-exams" @click="isDrawerOpen = false">
-          <template v-slot:prepend>
-            <v-icon>mdi-file-document</v-icon>
-          </template>
-          <v-list-item-title>{{ $t("reportList") }}</v-list-item-title>
-        </v-list-item>
+        <template v-if="hasRole('patient')">
+          <v-divider class="my-2"></v-divider>
+
+          <v-list-subheader>{{ $t("patient") }}</v-list-subheader>
+
+          <v-list-item to="/patient/appointments" @click="isDrawerOpen = false">
+            <template v-slot:prepend>
+              <v-icon>mdi-medical-bag</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("visitList") }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            to="/patient/medical-exams"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-file-document</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("reportList") }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            to="/patient/medical-events"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-calendar-clock</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("eventList") }}</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="hasRole('staff')">
+          <v-divider class="my-2"></v-divider>
+
+          <v-list-subheader>{{ $t("administration") }}</v-list-subheader>
+
+          <v-list-item
+            to="/administration/patients"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-account-multiple</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("managePatients") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/administration/doctors"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-doctor</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("manageDoctors") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/administration/staff" @click="isDrawerOpen = false">
+            <template v-slot:prepend>
+              <v-icon>mdi-account-tie</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("manageStaff") }}</v-list-item-title>
+          </v-list-item>
+        </template>
       </v-list>
     </v-navigation-drawer>
   </div>
