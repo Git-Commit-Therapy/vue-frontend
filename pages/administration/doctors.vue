@@ -7,10 +7,10 @@ import type { Ward } from "~/composable/protobuf/frontend/ward";
 //const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const { t } = useI18n();
 
-const doctorList = ref([] as Doctor[]);
+const doctorList = ref<Doctor[]>([]);
 const filterText = ref("");
 const selectedEntity = ref<any>(null);
-const allWards = ref([] as Ward[]);
+const allWards = ref<Ward[]>([]);
 
 onMounted(async () => {
   //  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
@@ -92,12 +92,12 @@ onMounted(async () => {
 
 const filteredDoctorList = computed(() =>
   doctorList.value
-    .filter((d) =>
-      [d.user!.name, d.user!.surname].some((s) =>
+    .filter((doctor: Doctor) =>
+      [doctor.user!.name, doctor.user!.surname].some((s) =>
         s.toLowerCase().includes(filterText.value.toLowerCase()),
       ),
     )
-    .map((d) => d.user),
+    .map((doctor: Doctor) => doctor.user),
 );
 
 const headers = computed(() => [
@@ -179,7 +179,7 @@ const isSaveDisabled = computed(() => {
           <v-text-field
             v-model="filterText"
             :label="t('filterPlaceholder')"
-            prepend-icon="mdi-magnify"
+            prepend-inner-icon="mdi-magnify"
             clearable
           />
         </v-col>
