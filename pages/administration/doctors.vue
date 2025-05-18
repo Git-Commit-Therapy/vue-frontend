@@ -83,18 +83,18 @@ const saveEntity = async () => {
 };
 
 const isSaveDisabled = computed(() => {
-  const e = selectedEntity.value;
-  if (!e) return true;
-  const u = e.user;
+  const entity = selectedEntity.value;
+  if (!entity) return true;
+  const user = entity.user;
   return ![
-    u.name,
-    u.surname,
-    u.birthDate,
-    u.phoneNumber,
-    u.email,
-    e.medSpecialization,
-    e.officePhoneNumber,
-    e.ward,
+    user.name,
+    user.surname,
+    user.birthDate,
+    user.phoneNumber,
+    user.email,
+    entity.medSpecialization,
+    entity.officePhoneNumber,
+    entity.ward,
   ].every(Boolean);
 });
 </script>
