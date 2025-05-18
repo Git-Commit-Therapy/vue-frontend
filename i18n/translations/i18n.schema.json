@@ -55,7 +55,9 @@
     "relatedExams": { "type": "string" },
     "examType": { "type": "string" },
     "unknown": { "type": "string" },
-    "viewExam": { "type": "string" }
+    "viewExam": { "type": "string" },
+    "manageStaff": { "type": "string" },
+    "newStaff": { "type": "string" }
   },
   "required": [
     "firstName",
@@ -111,6 +113,8 @@
     "relatedExams",
     "examType",
     "unknown",
-    "viewExam"
+    "viewExam",
+    "manageStaff",
+    "newStaff"
   ]
 }

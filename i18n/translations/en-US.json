@@ -57,5 +57,7 @@
   "successMessage": "Changes saved successfully.",
   "errorMessage": "An error occurred while saving changes.",
   "manageDoctors": "Manage Doctors",
-  "filterPlaceholder": "Filter"
+  "filterPlaceholder": "Filter",
+  "manageStaff": "Manage staff",
+  "newStaff": "Add new staff"
 }
