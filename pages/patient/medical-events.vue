@@ -2,7 +2,10 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import type { GetAllMedicalEventResponse, GetMedicalExamDetailsResponse } from "@/composable/protobuf/frontend/patient_services";
+import type {
+  GetAllMedicalEventResponse,
+  GetMedicalExamDetailsResponse,
+} from "@/composable/protobuf/frontend/patient_services";
 import { formatDateTime } from "@/utils/date-format";
 import type { MedicalEvent } from "~/composable/protobuf/frontend/medical_event";
 import PatientGRPC from "~/composable/clients/patientGrpcClient";
@@ -24,7 +27,7 @@ const examsDetails = ref<Array<MedicalExam> | null>(null); // Stores exam detail
 
 // Function to toggle the expanded state of an event
 async function toggleEventDetails(event: MedicalEvent | null): Promise<void> {
-  expandedEventId.value = (event) ? event.eventId : null;
+  expandedEventId.value = event ? event.eventId : null;
   if (event) {
     examsDetails.value = [];
     for (let examId of event.medicalExamIds) {
@@ -35,14 +38,14 @@ async function toggleEventDetails(event: MedicalEvent | null): Promise<void> {
         examType: "",
         doctor: undefined,
         patient: undefined,
-        medicalEvent: undefined
-      }
-      let response: GetMedicalExamDetailsResponse = await patientGRPC.getMedicalExamDetails(tmp);
+        medicalEvent: undefined,
+      };
+      let response: GetMedicalExamDetailsResponse =
+        await patientGRPC.getMedicalExamDetails(tmp);
       if (!response) {
         console.error("Error fetching exam details for examId:", examId);
       } else {
-        if (response.exam != undefined)
-          examsDetails.value.push(response.exam);
+        if (response.exam != undefined) examsDetails.value.push(response.exam);
       }
     }
   }
@@ -54,11 +57,14 @@ function goToMedicalExams(examId: number): void {
 }
 
 function getMedicalEvents(): void {
-  patientGRPC.getAllMedicalEvent(from.value, to.value).then((response: GetAllMedicalEventResponse) => {
-    medicalEvents.value = response;
-  }).catch((error) => {
-    console.error("Error fetching medical events:", error);
-  });
+  patientGRPC
+    .getAllMedicalEvent(from.value, to.value)
+    .then((response: GetAllMedicalEventResponse) => {
+      medicalEvents.value = response;
+    })
+    .catch((error) => {
+      console.error("Error fetching medical events:", error);
+    });
 }
 
 onBeforeMount(() => {
@@ -70,7 +76,6 @@ onBeforeMount(() => {
   // Fetch medical events
   getMedicalEvents();
 });
-
 </script>
 
 <template>
@@ -88,11 +93,7 @@ onBeforeMount(() => {
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field
-            v-model="to"
-            label="To Date"
-            type="date"
-          ></v-text-field>
+          <v-text-field v-model="to" label="To Date" type="date"></v-text-field>
         </v-col>
         <v-col cols="12" class="text-center mt-4">
           <v-btn color="primary" @click="getMedicalEvents">
@@ -103,17 +104,43 @@ onBeforeMount(() => {
     </v-card-text>
   </v-card>
   <v-card variant="flat" class="overflow-y-auto" max-height="400">
-    <v-card-text v-if="medicalEvents != null && medicalEvents?.medicalEvents?.length > 0">
+    <v-card-text
+      v-if="medicalEvents != null && medicalEvents?.medicalEvents?.length > 0"
+    >
       <v-timeline align="start" density="compact">
-        <v-timeline-item v-for="event in medicalEvents.medicalEvents" :key="event.eventId" size="x-small">
+        <v-timeline-item
+          v-for="event in medicalEvents.medicalEvents"
+          :key="event.eventId"
+          size="x-small"
+        >
           <div class="mb-4">
-            <strong>{{ event.fromDateTime ? formatDateTime(event.fromDateTime) : '#' }} - {{ event.toDateTime ?
-              formatDateTime(event.toDateTime) : '#' }}</strong>
-            <v-btn @click="toggleEventDetails((expandedEventId === event.eventId) ? null : event)">
-              <strong>{{ expandedEventId === event.eventId ? t("hideDetails") : t("inspectEvent") }}</strong>
+            <strong
+              >{{
+                event.fromDateTime ? formatDateTime(event.fromDateTime) : "#"
+              }}
+              -
+              {{
+                event.toDateTime ? formatDateTime(event.toDateTime) : "#"
+              }}</strong
+            >
+            <v-btn
+              @click="
+                toggleEventDetails(
+                  expandedEventId === event.eventId ? null : event,
+                )
+              "
+            >
+              <strong>{{
+                expandedEventId === event.eventId
+                  ? t("hideDetails")
+                  : t("inspectEvent")
+              }}</strong>
             </v-btn>
           </div>
-          <div v-if="expandedEventId != null && expandedEventId === event.eventId" class="mt-2">
+          <div
+            v-if="expandedEventId != null && expandedEventId === event.eventId"
+            class="mt-2"
+          >
             <p v-if="event.severityCode">
               <strong>{{ t("severityCode") }}:</strong> {{ event.severityCode }}
             </p>
@@ -121,7 +148,8 @@ onBeforeMount(() => {
               <strong>{{ t("ward") }}:</strong> {{ event.ward }}
             </p>
             <p v-if="event.dischargeLetter">
-              <strong>{{ t("dischargeLetter") }}:</strong> {{ event.dischargeLetter }}
+              <strong>{{ t("dischargeLetter") }}:</strong>
+              {{ event.dischargeLetter }}
             </p>
             <div v-if="event.medicalExamIds?.length > 0">
               <h3>{{ t("relatedExams") }}</h3>
@@ -131,7 +159,10 @@ onBeforeMount(() => {
                     {{ t("examType") }}: {{ exam.examType || t("unknown") }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{ t("doctor") }}: {{ `${exam.doctor?.user?.name} ${exam.doctor?.user?.surname}` }}
+                    {{ t("doctor") }}:
+                    {{
+                      `${exam.doctor?.user?.name} ${exam.doctor?.user?.surname}`
+                    }}
                   </v-list-item-subtitle>
                   <v-btn @click="goToMedicalExams(exam.examId)">
                     {{ t("viewExam") }}
