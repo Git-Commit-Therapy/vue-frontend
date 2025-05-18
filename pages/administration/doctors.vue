@@ -2,92 +2,24 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
-import type { Doctor } from "~/composable/protobuf/frontend/user";
+import type { Doctor, User } from "~/composable/protobuf/frontend/user";
 import type { Ward } from "~/composable/protobuf/frontend/ward";
-//const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const { t } = useI18n();
 
 const doctorList = ref<Doctor[]>([]);
-const filterText = ref("");
+const filterText = ref<string>("");
 const selectedEntity = ref<any>(null);
 const allWards = ref<Ward[]>([]);
+const showError = ref<boolean>(false);
+const error = ref<string | null>(null);
 
+function hideError() {
+  showError.value = false;
+}
 onMounted(async () => {
-  //  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
-  // allWards.value = (await employeeGRPC.getAllWards()).ward;
-
-  allWards.value = [
-    { wardId: 1, name: "Cardiology" },
-    { wardId: 2, name: "Neurology" },
-    { wardId: 3, name: "Pediatrics" },
-  ];
-  doctorList.value = [
-    {
-      user: {
-        id: "u001",
-        name: "Alice",
-        surname: "Smith",
-        birthDate: new Date("1980-05-12"),
-        phoneNumber: "555-1234",
-        email: "alice.smith@hospital.org",
-      },
-      medSpecialization: "Cardiologist",
-      officePhoneNumber: "555-1001",
-      ward: allWards.value[0],
-    },
-    {
-      user: {
-        id: "u002",
-        name: "Bob",
-        surname: "Allen",
-        birthDate: new Date("1975-09-20"),
-        phoneNumber: "555-5678",
-        email: "bob.allen@hospital.org",
-      },
-      medSpecialization: "Neurologist",
-      officePhoneNumber: "555-1002",
-      ward: allWards.value[1],
-    },
-    {
-      user: {
-        id: "u003",
-        name: "Carol",
-        surname: "Nguyen",
-        birthDate: new Date("1988-03-15"),
-        phoneNumber: "555-7890",
-        email: "carol.nguyen@hospital.org",
-      },
-      medSpecialization: "Pediatrician",
-      officePhoneNumber: "555-1003",
-      ward: allWards.value[2],
-    },
-    {
-      user: {
-        id: "u004",
-        name: "David",
-        surname: "Lee",
-        birthDate: new Date("1990-11-02"),
-        phoneNumber: "555-3456",
-        email: "david.lee@hospital.org",
-      },
-      medSpecialization: "Orthopedic Surgeon",
-      officePhoneNumber: "555-1004",
-      ward: allWards.value[0],
-    },
-    {
-      user: {
-        id: "u005",
-        name: "Elena",
-        surname: "Martinez",
-        birthDate: new Date("1982-07-28"),
-        phoneNumber: "555-6543",
-        email: "elena.martinez@hospital.org",
-      },
-      medSpecialization: "Neurologist",
-      officePhoneNumber: "555-1005",
-      ward: allWards.value[1],
-    },
-  ];
+  doctorList.value = (await employeeGRPC.getAllDoctors()).doctors;
+  allWards.value = (await employeeGRPC.getAllWards()).ward;
 });
 
 const filteredDoctorList = computed(() =>
@@ -107,8 +39,8 @@ const headers = computed(() => [
   { title: t("actions"), value: "actions", sortable: false },
 ]).value;
 
-const editEntity = (user: any) => {
-  selectedEntity.value = doctorList.value.find((d) => d.user!.id === user.id);
+const editEntity = (user?: User) => {
+  selectedEntity.value = doctorList.value.find((d) => d.user!.id === user!.id);
 };
 
 const cancelEdit = () => (selectedEntity.value = null);
@@ -120,7 +52,7 @@ const newEntity = () => {
       id: "",
       name: "",
       surname: "",
-      birthDate: "",
+      birthDate: new Date(),
       phoneNumber: "",
       email: "",
     },
@@ -131,21 +63,23 @@ const newEntity = () => {
 };
 
 const saveEntity = async () => {
-  /*
-  const fn = selectedEntity.value.isNew
-    ? employeeGRPC.createDoctor
-    : employeeGRPC.editDoctor;
+  try {
+    const fn = selectedEntity.value.isNew
+      ? employeeGRPC.createDoctor
+      : employeeGRPC.editDoctor;
 
-  const response = await fn(selectedEntity.value);
-  if (response?.success) {
-    alert(t("successMessage"));
-    cancelEdit();
-  } else {
-    alert(
-      t("errorMessage") + (response?.message ? ": " + response.message : ""),
-    );
+    const response = await fn(selectedEntity.value);
+    if (response?.success) {
+      cancelEdit();
+    } else {
+      error.value =
+        t("errorMessage") + (response?.message ? ": " + response.message : "");
+      showError.value = true;
+    }
+  } catch (err) {
+    error.value = t("unexpectedError");
+    showError.value = true;
   }
-  */
 };
 
 const isSaveDisabled = computed(() => {
@@ -167,6 +101,17 @@ const isSaveDisabled = computed(() => {
 
 <template>
   <v-container>
+    <v-snackbar
+      v-model="showError"
+      :timeout="5000"
+      color="error"
+      location="top right"
+    >
+      {{ error }}
+      <template v-slot:actions>
+        <v-btn variant="text" icon="mdi-close" @click="hideError"></v-btn>
+      </template>
+    </v-snackbar>
     <v-row>
       <v-col cols="12">
         <h1>{{ t("manageDoctors") }}</h1>
