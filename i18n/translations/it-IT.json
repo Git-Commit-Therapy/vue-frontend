@@ -46,7 +46,7 @@
   "unknown": "Sconosciuto",
   "viewExam": "Visualizza Esame",
   "noMedicalEvents": "Nessun evento medico disponibile.",
-  "manageDoctors": "Amministrazione Dottori",
+  "manageDoctors": "Modifica dottori",
   "actions": "Azioni",
   "edit": "Modifica",
   "filterPlaceholder": "Filtra",
@@ -61,5 +61,8 @@
   "newStaff": "Aggiungi personale",
   "managePatients": "Modifica pazienti",
   "newPatient": "Aggiungi paziente",
-  "editPatient": "Modifica paziente"
+  "editPatient": "Modifica paziente",
+  "administraton": "Amministrazione",
+  "patient": "Paziente",
+  "eventList": "I tuoi eventi"
 }

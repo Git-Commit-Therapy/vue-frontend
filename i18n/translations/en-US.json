@@ -62,5 +62,8 @@
   "newStaff": "Add new staff",
   "managePatients": "Manage patients",
   "newPatient": "Add new patient",
-  "editPatient": "Edit patient informations"
+  "editPatient": "Edit patient informations",
+  "administration": "Administration",
+  "patient": "Patient",
+  "eventList": "Your medical events"
 }

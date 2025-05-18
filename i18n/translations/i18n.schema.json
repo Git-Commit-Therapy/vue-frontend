@@ -118,6 +118,9 @@
     "newStaff",
     "managePatients",
     "newPatient",
-    "editPatient"
+    "editPatient",
+    "administration",
+    "patient",
+    "eventList"
   ]
 }
