@@ -58,5 +58,8 @@
   "successMessage": "Operazione completata con successo.",
   "errorMessage": "Si è verificato un errore",
   "manageStaff": "Modifica personale",
-  "newStaff": "Aggiungi personale"
+  "newStaff": "Aggiungi personale",
+  "managePatients": "Modifica pazienti",
+  "newPatient": "Aggiungi paziente",
+  "editPatient": "Modifica paziente"
 }

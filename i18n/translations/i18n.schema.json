@@ -115,6 +115,9 @@
     "unknown",
     "viewExam",
     "manageStaff",
-    "newStaff"
+    "newStaff",
+    "managePatients",
+    "newPatient",
+    "editPatient"
   ]
 }
