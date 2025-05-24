@@ -92,7 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
       } catch (error) {
         console.error("Error refreshing token:", error);
       }
-    }, 15000);
+    }, 30000);
   }
 
   /**

@@ -61,23 +61,20 @@ export default class PatientGRPC {
   private createPatientsGrpcClient(url: string): PatientServicesClient {
     const channel: Channel = createChannel(url);
     const authStore = useAuthStore();
-    const token = authStore.getAccessToken();
-    if (!token) {
-      throw new Error("Error: JWT is missing.");
-    }
     if (!authStore.isValidToken()) {
       throw new Error("Error: JWT is invalid.");
     }
     return createClientFactory()
-      .use((call, options) =>
-        call.next(call.request, {
+      .use((call, options) => {
+        const token = authStore.getAccessToken();
+        return call.next(call.request, {
           ...options,
           metadata: Metadata(options.metadata).set(
             "Authorization",
             `Bearer ${token}`,
           ),
-        }),
-      )
+        });
+      })
       .create(PatientServicesDefinition, channel);
   }
 
