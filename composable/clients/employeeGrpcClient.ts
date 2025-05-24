@@ -6,6 +6,7 @@ import {
 } from "nice-grpc-web";
 import {
   CreateDoctorResponse,
+  CreateMedicalInfoResponse,
   CreatePatientResponse,
   CreateStaffResponse,
   EmployeeServicesDefinition,
@@ -14,6 +15,7 @@ import {
   GetAllStaffsResponse,
   GetAllWardResponse,
   ModifyDoctorResponse,
+  ModifyMedicalInfoResponse,
   ModifyPatientResponse,
   ModifyStaffResponse,
   type EmployeeServicesClient,
@@ -23,6 +25,7 @@ import type {
   Patient,
   Staff,
 } from "~/composable/protobuf/frontend/user";
+import type { MedicalInfo } from "../protobuf/frontend/medical_info";
 
 /** Enum representing the type of employee. */
 enum EmployeeType {
@@ -180,11 +183,39 @@ export default class EmployeeGRPC {
     return this.grpcConnection.modifyStaff(newStaffDetails);
   }
 
+  /**
+   * Checks if the current user is a staff member.
+   * @returns {boolean} True if the user is a staff member, false otherwise.
+   */
   isStaff(): boolean {
     return this.type === EmployeeType.STAFF;
   }
 
+  /**
+   * Checks if the current user is a doctor.
+   * @returns {boolean} True if the user is a doctor, false otherwise.
+   */
   isDoctor(): boolean {
     return this.type === EmployeeType.DOCTOR;
+  }
+
+  /**
+   * Updates a medical information for a given patient.
+   * @param {updatedMedicalInfo} updatedMedicalInfo medical information for the patient.
+   * @returns {Promise<ModifyMedicalInfoResponse>} Promise containing the status of the request.
+   */
+  updateMedicalInfo(
+    updatedMedicalInfo: MedicalInfo,
+  ): Promise<ModifyMedicalInfoResponse> {
+    return this.grpcConnection.modifyMedicalInfo(updatedMedicalInfo);
+  }
+
+  /**
+   * Creates a medical information for a given patient.
+   * @param {MedicalInfo} info medical information for the patient.
+   * @returns {Promise<CreateMedicalInfoResponse>} Promise containing the status of the request.
+   */
+  createMedicalInfo(info: MedicalInfo): Promise<CreateMedicalInfoResponse> {
+    return this.grpcConnection.createMedicalInfo(info);
   }
 }
