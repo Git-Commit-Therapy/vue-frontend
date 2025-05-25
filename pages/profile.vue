@@ -5,9 +5,9 @@ import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const { t } = useI18n();
 
 const config = useRuntimeConfig();
-const patientGRPC: PatientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
-// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
-
+const patientGRPC: PatientGRPC = PatientGRPC.getInstance(
+  config.public.patientsUrl,
+);
 const patient = ref<Patient>();
 const medicalInfo = ref<MedicalInfo[]>([]);
 const nameSurname = ref<string>("");
@@ -22,6 +22,10 @@ onBeforeMount(async () => {
   } catch (error) {
     console.error("Error fetching patient data:", error);
   }
+  patient.value = await patientGRPC.getPatient();
+  medicalInfo.value = (await patientGRPC.getAllMedicalInfo()).medicalInfo;
+  nameSurname.value =
+    patient.value.user!.name + " " + patient.value.user!.surname;
 });
 </script>
 
