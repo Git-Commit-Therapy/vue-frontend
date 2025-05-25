@@ -8,10 +8,16 @@ const patient = ref<Patient>();
 const medicalInfo = ref<MedicalInfo[]>([]);
 const nameSurname = ref<string>("");
 onBeforeMount(async () => {
-  patient.value = await patientGRPC.getPatient();
-  medicalInfo.value = (await patientGRPC.getAllMedicalInfo()).medicalInfo;
-  nameSurname.value =
-    patient.value.user!.name + " " + patient.value.user!.surname;
+  try {
+    const res = await patientGRPC.getPatient();
+    patient.value = res;
+    nameSurname.value = res.user ? `${res.user.name} ${res.user.surname}` : "";
+
+    const allInfo = await patientGRPC.getAllMedicalInfo();
+    medicalInfo.value = allInfo.medicalInfo;
+  } catch (error) {
+    console.error("Error fetching patient data:", error);
+  }
 });
 </script>
 
