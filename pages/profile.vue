@@ -4,10 +4,15 @@ import PatientGRPC from "@/composable/clients/patientGrpcClient";
 import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const { t } = useI18n();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
-const patient: Patient = await patientGRPC.getPatient();
-const medicalInfo: MedicalInfo[] = (await patientGRPC.getAllMedicalInfo())
-  .medicalInfo;
-const nameSurname: string = patient.user!.name + " " + patient.user!.surname;
+const patient = ref<Patient>();
+const medicalInfo = ref<MedicalInfo[]>([]);
+const nameSurname = ref<string>("");
+onBeforeMount(async () => {
+  patient.value = await patientGRPC.getPatient();
+  medicalInfo.value = (await patientGRPC.getAllMedicalInfo()).medicalInfo;
+  nameSurname.value =
+    patient.value.user!.name + " " + patient.value.user!.surname;
+});
 </script>
 
 <template>
