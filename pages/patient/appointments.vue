@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
-// import env from "@/utils/env";
 import type { GetAppointmentsResponse } from "@/composable/protobuf/frontend/employee_services";
 import { formatDateTime } from "@/utils/date-format";
 const { t } = useI18n();
-// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 const config = useRuntimeConfig();
-const patientGRPC: PatientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
+const patientGRPC: PatientGRPC = PatientGRPC.getInstance(
+  config.public.patientsUrl,
+);
 const patientAppointments = ref<GetAppointmentsResponse>();
 onBeforeMount(async () => {
   patientAppointments.value = await patientGRPC.getAppointments();
