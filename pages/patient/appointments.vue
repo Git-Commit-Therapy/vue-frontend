@@ -5,8 +5,10 @@ import type { GetAppointmentsResponse } from "@/composable/protobuf/frontend/emp
 import { formatDateTime } from "@/utils/date-format";
 const { t } = useI18n();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
-const patientAppointments: GetAppointmentsResponse =
-  await patientGRPC.getAppointments();
+const patientAppointments = ref<GetAppointmentsResponse>();
+onBeforeMount(async () => {
+  patientAppointments.value = await patientGRPC.getAppointments();
+});
 </script>
 
 <template>
@@ -15,7 +17,9 @@ const patientAppointments: GetAppointmentsResponse =
   </h1>
   <v-card variant="outlined"></v-card>
   <v-card variant="flat" class="overflow-y-auto" max-height="400">
-    <v-card-text v-if="patientAppointments.appointments.length > 0">
+    <v-card-text
+      v-if="patientAppointments && patientAppointments.appointments.length > 0"
+    >
       <v-timeline align="start" density="compact">
         <v-timeline-item
           v-for="appointment in patientAppointments.appointments"

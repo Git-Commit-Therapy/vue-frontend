@@ -81,19 +81,22 @@ function setShowError(val: boolean) {
     <v-card-text>
       <v-row>
         <v-col cols="12" md="6">
-          <v-text-field
+          <v-date-picker
             v-model="from"
-            :label="t('fromDate')"
-            type="date"
-            @change="loadMedicalExams"
+            :title="t('fromDate')"
+            :max="to"
+            :display-mode="'static'"
+            @update:modelValue="loadMedicalExams"
           />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field
+          <v-date-picker
             v-model="to"
-            :label="t('toDate')"
-            type="date"
-            @change="loadMedicalExams"
+            :title="t('toDate')"
+            :min="from"
+            :max="new Date()"
+            :display-mode="'static'"
+            @update:modelValue="loadMedicalExams"
           />
         </v-col>
       </v-row>

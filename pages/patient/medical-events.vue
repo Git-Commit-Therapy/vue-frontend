@@ -9,8 +9,7 @@ import type {
 import { formatDateTime } from "@/utils/date-format";
 import type { MedicalEvent } from "~/composable/protobuf/frontend/medical_event";
 import PatientGRPC from "~/composable/clients/patientGrpcClient";
-import type { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
-
+import { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 const { t } = useI18n();
 const router = useRouter();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
@@ -28,25 +27,24 @@ const examsDetails = ref<Array<MedicalExam> | null>(null); // Stores exam detail
 // Function to toggle the expanded state of an event
 async function toggleEventDetails(event: MedicalEvent | null): Promise<void> {
   expandedEventId.value = event ? event.eventId : null;
-  if (event) {
-    examsDetails.value = [];
-    for (let examId of event.medicalExamIds) {
-      let tmp: MedicalExam = {
-        examId: examId,
-        dateTime: undefined,
-        medicalReport: "",
-        examType: "",
-        doctor: undefined,
-        patient: undefined,
-        medicalEvent: undefined,
-      };
-      let response: GetMedicalExamDetailsResponse =
-        await patientGRPC.getMedicalExamDetails(tmp);
-      if (!response) {
-        console.error("Error fetching exam details for examId:", examId);
-      } else {
-        if (response.exam != undefined) examsDetails.value.push(response.exam);
+
+  if (!event) return;
+
+  examsDetails.value = [];
+  console.log(event.medicalExamIds);
+  for (const examId of event.medicalExamIds) {
+    try {
+      const tmp = MedicalExam.create({ examId: examId });
+      const response = await patientGRPC.getMedicalExamDetails(tmp);
+
+      if (!response || !response.exam) {
+        console.warn(`No exam returned for examId: ${examId}`, response);
+        continue;
       }
+
+      examsDetails.value.push(response.exam);
+    } catch (err) {
+      console.error(`Failed to fetch exam details for examId: ${examId}`, err);
     }
   }
 }
@@ -86,14 +84,25 @@ onBeforeMount(() => {
     <v-card-text>
       <v-row>
         <v-col cols="12" md="6">
-          <v-text-field
+          <v-date-picker
             v-model="from"
-            label="From Date"
-            type="date"
-          ></v-text-field>
+            :max="to"
+            color="primary"
+            title="From Date"
+            show-adjacent-months
+            hide-header
+          />
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field v-model="to" label="To Date" type="date"></v-text-field>
+          <v-date-picker
+            v-model="to"
+            :min="from"
+            :max="new Date().toISOString().slice(0, 10)"
+            color="primary"
+            title="To Date"
+            show-adjacent-months
+            hide-header
+          />
         </v-col>
         <v-col cols="12" class="text-center mt-4">
           <v-btn color="primary" @click="getMedicalEvents">
@@ -145,7 +154,7 @@ onBeforeMount(() => {
               <strong>{{ t("severityCode") }}:</strong> {{ event.severityCode }}
             </p>
             <p v-if="event.ward">
-              <strong>{{ t("ward") }}:</strong> {{ event.ward }}
+              <strong>{{ t("ward") }}:</strong> {{ event.ward.name }}
             </p>
             <p v-if="event.dischargeLetter">
               <strong>{{ t("dischargeLetter") }}:</strong>
