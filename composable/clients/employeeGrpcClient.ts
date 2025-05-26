@@ -5,6 +5,7 @@ import {
   type Channel,
 } from "nice-grpc-web";
 import {
+  CreateAppointmentResponse,
   CreateDoctorResponse,
   CreateMedicalInfoResponse,
   CreatePatientResponse,
@@ -14,6 +15,7 @@ import {
   GetAllPatientsResponse,
   GetAllStaffsResponse,
   GetAllWardResponse,
+  ModifyAppointmentResponse,
   ModifyDoctorResponse,
   ModifyMedicalInfoResponse,
   ModifyPatientResponse,
@@ -26,6 +28,7 @@ import type {
   Staff,
 } from "~/composable/protobuf/frontend/user";
 import type { MedicalInfo } from "../protobuf/frontend/medical_info";
+import type { Appointment } from "../protobuf/frontend/appointment";
 
 /** Enum representing the type of employee. */
 enum EmployeeType {
@@ -84,7 +87,7 @@ export default class EmployeeGRPC {
       throw new Error("Error: JWT is invalid.");
     }
     return createClientFactory()
-      .use((call, options) =>{
+      .use((call, options) => {
         const token = authStore.getAccessToken();
         return call.next(call.request, {
           ...options,
@@ -217,5 +220,27 @@ export default class EmployeeGRPC {
    */
   createMedicalInfo(info: MedicalInfo): Promise<CreateMedicalInfoResponse> {
     return this.grpcConnection.createMedicalInfo(info);
+  }
+
+  /**
+   * Creates an appointment for a given patient.
+   * @param {Appointment} appointment Appointment details including staff, doctor, and patient.
+   * @returns {Promise<CreateAppointmentResponse>} Promise containing the status of the request.
+   */
+  createAppointment(
+    appointment: Appointment,
+  ): Promise<CreateAppointmentResponse> {
+    return this.grpcConnection.createAppointment(appointment);
+  }
+
+  /**
+   * Updates an existing appointment.
+   * @param {Appointment} updatedAppointment Updated appointment details.
+   * @returns {Promise<ModifyAppointmentResponse>} Promise containing the status of the request.
+   */
+  updateAppointment(
+    updatedAppointment: Appointment,
+  ): Promise<ModifyAppointmentResponse> {
+    return this.grpcConnection.modifyAppointment(updatedAppointment);
   }
 }
