@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import { useI18n } from "vue-i18n";
-import type { Patient, Staff } from "~/composable/protobuf/frontend/user";
-import env from "~/utils/env";
+import { reactive, ref, computed, onBeforeMount } from "vue";
+import type { Patient } from "~/composable/protobuf/frontend/user";
 import type { MedicalInfo } from "~/composable/protobuf/frontend/medical_info";
+import env from "~/utils/env";
+
 const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
-const { t } = useI18n(); // Reactive state
+const { t } = useI18n();
+
 const medicalInfo = reactive<MedicalInfo>({
   medicalInfoId: -1,
   description: "",
@@ -13,10 +16,10 @@ const medicalInfo = reactive<MedicalInfo>({
 });
 
 const patients = ref<Patient[]>([]);
-const searchQuery = ref<string>("");
-const isLoadingPatients = ref<boolean>(false);
-const isSubmitting = ref<boolean>(false);
-const showError = ref<boolean>(false);
+const searchQuery = ref("");
+const isLoadingPatients = ref(false);
+const isSubmitting = ref(false);
+const showError = ref(false);
 const errorMessage = ref("");
 
 // Validation state
@@ -30,25 +33,25 @@ const errors = reactive({
   description: "",
 });
 
-// Computed filtered patients
 const filteredPatients = computed(() => {
   if (!searchQuery.value) return patients.value;
   const query = searchQuery.value.toLowerCase();
-  return patients.value.filter(
-    (patient: Patient) =>
-      patient.user!.name.toLowerCase().includes(query) ||
-      patient.user!.email?.toLowerCase().includes(query) ||
-      patient.user!.id.toString().includes(query),
-  );
+  return patients.value.filter((patient) => {
+    const user = patient.user;
+    return (
+      user &&
+      (user.name.toLowerCase().includes(query) ||
+        user.email?.toLowerCase().includes(query) ||
+        user.id.toString().includes(query))
+    );
+  });
 });
 
-// Form validation
 const isFormValid = computed(() => {
   return !!medicalInfo.patient && !!medicalInfo.description.trim();
 });
 
-// Load patients on mount
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
     isLoadingPatients.value = true;
     patients.value = await fetchPatients();
@@ -60,18 +63,14 @@ onMounted(async () => {
   }
 });
 
-// Validation functions
 function validatePatient(patient: Patient | undefined): string {
-  if (!patient) return t("required");
-  return "";
+  return patient ? "" : t("required");
 }
 
 function validateDescription(desc: string): string {
-  if (!desc.trim()) return t("required");
-  return "";
+  return desc.trim() ? "" : t("required");
 }
 
-// Form handling
 async function submitForm() {
   touched.patient = true;
   touched.description = true;
@@ -84,7 +83,6 @@ async function submitForm() {
   try {
     isSubmitting.value = true;
     await submitMedicalInfo(medicalInfo);
-    // Handle success
     resetForm();
   } catch (error) {
     showError.value = true;
@@ -130,7 +128,7 @@ function setError(error: boolean) {
     </v-snackbar>
 
     <v-card class="mx-auto my-4" max-width="800" rounded="lg">
-      <v-card-title class="headline">
+      <v-card-title class="text-h5">
         {{ t("medicalInfo.title") }}
       </v-card-title>
 
@@ -145,9 +143,9 @@ function setError(error: boolean) {
                   :search-input.sync="searchQuery"
                   :label="t('medicalInfo.patient')"
                   :loading="isLoadingPatients"
-                  :errors="touched.patient && errors.patient"
-                  :error-messages="errors.patient"
-                  item-title="name"
+                  :error="Boolean(errors.patient)"
+                  :error-messages="touched.patient ? errors.patient : ''"
+                  item-title="user.name"
                   item-value="id"
                   return-object
                   clearable
@@ -157,10 +155,12 @@ function setError(error: boolean) {
                   <template #item="{ props, item }">
                     <v-list-item v-bind="props">
                       <template #title>
-                        {{ item.raw.user!.name }}
+                        {{ item.raw.user?.name || "Unknown" }}
                       </template>
                       <template #subtitle>
-                        {{ item.raw.user!.email }} ({{ item.raw.user!.id }})
+                        {{ item.raw.user?.email || "No email" }} ({{
+                          item.raw.user?.id ?? "?"
+                        }})
                       </template>
                     </v-list-item>
                   </template>
@@ -171,8 +171,10 @@ function setError(error: boolean) {
                 <v-textarea
                   v-model="medicalInfo.description"
                   :label="t('medicalInfo.description')"
-                  :error="touched.description"
-                  :errorMessages="errors.description"
+                  :error="Boolean(errors.description)"
+                  :error-messages="
+                    touched.description ? errors.description : ''
+                  "
                   variant="outlined"
                   rows="3"
                   @blur="touched.description = true"

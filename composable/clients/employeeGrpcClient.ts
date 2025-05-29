@@ -7,6 +7,8 @@ import {
 import {
   CreateAppointmentResponse,
   CreateDoctorResponse,
+  CreateMedicalEventResponse,
+  CreateMedicalExamResponse,
   CreateMedicalInfoResponse,
   CreatePatientResponse,
   CreateStaffResponse,
@@ -15,8 +17,12 @@ import {
   GetAllPatientsResponse,
   GetAllStaffsResponse,
   GetAllWardResponse,
+  GetAppointmentsFromDoctorRequest,
+  GetAppointmentsFromDoctorResponse,
   ModifyAppointmentResponse,
   ModifyDoctorResponse,
+  ModifyMedicalEventResponse,
+  ModifyMedicalExamResponse,
   ModifyMedicalInfoResponse,
   ModifyPatientResponse,
   ModifyStaffResponse,
@@ -29,6 +35,8 @@ import type {
 } from "~/composable/protobuf/frontend/user";
 import type { MedicalInfo } from "../protobuf/frontend/medical_info";
 import type { Appointment } from "../protobuf/frontend/appointment";
+import type { MedicalExam } from "../protobuf/frontend/medical_exam";
+import type { MedicalEvent } from "../protobuf/frontend/medical_event";
 
 /** Enum representing the type of employee. */
 enum EmployeeType {
@@ -98,6 +106,14 @@ export default class EmployeeGRPC {
         });
       })
       .create(EmployeeServicesDefinition, channel);
+  }
+
+  /**
+   * Retrieves the doctor associated to the JWT.
+   * @returns {Promise<Doctor>} Promise resolving to a doctor.
+   */
+  getDoctor(): Promise<Doctor> {
+    return this.grpcConnection.getDoctor({});
   }
 
   /**
@@ -242,5 +258,94 @@ export default class EmployeeGRPC {
     updatedAppointment: Appointment,
   ): Promise<ModifyAppointmentResponse> {
     return this.grpcConnection.modifyAppointment(updatedAppointment);
+  }
+
+  /**
+   * Creates a medical exam for a given patient.
+   * @param {MedicalExam} exam Medical exam details.
+   * @returns {Promise<CreateMedicalExamResponse>} Promise containing the status of the request.
+   */
+  createMedicalExam(exam: MedicalExam): Promise<CreateMedicalExamResponse> {
+    return this.grpcConnection.createMedicalExam(exam);
+  }
+
+  /**
+   * Updates a medical exam for a given patient.
+   * @param {MedicalExam} updatedExam Updated medical exam details.
+   * @returns {Promise<ModifyMedicalExamResponse>} Promise containing the status of the request.
+   */
+  updateMedicalExam(
+    updatedExam: MedicalExam,
+  ): Promise<ModifyMedicalExamResponse> {
+    return this.grpcConnection.modifyMedicalExam(updatedExam);
+  }
+
+  /**
+   * Creates a medical event for a given patient.
+   * @param {MedicalEvent} event Medical event details.
+   * @returns {Promise<CreateMedicalEventResponse>} Promise containing the status of the request.
+   */
+  createMedicalEvent(event: MedicalEvent): Promise<CreateMedicalEventResponse> {
+    return this.grpcConnection.createMedicalEvent(event);
+  }
+
+  /**
+   * Updates a medical event for a given patient.
+   * @param {MedicalEvent} updatedEvent Updated medical event details.
+   * @returns {Promise<ModifyMedicalEventResponse>} Promise containing the status of the request.
+   */
+  updateMedicalEvent(
+    updatedEvent: MedicalEvent,
+  ): Promise<ModifyMedicalEventResponse> {
+    return this.grpcConnection.modifyMedicalEvent(updatedEvent);
+  }
+
+  /**
+   * Retrieves appointments for a specific doctor.
+   * @param {GetAppointmentsFromDoctorRequest} request Request containing doctor identification.
+   * @returns {Promise<GetAppointmentsFromDoctorResponse>} Promise with the list of appointments.
+   */
+  getAppointmentFromDoctor(
+    request: GetAppointmentsFromDoctorRequest,
+  ): Promise<GetAppointmentsFromDoctorResponse> {
+    return this.grpcConnection.getAppointmentsFromDoctor(request);
+  }
+
+  /**
+   * Modifies an existing appointment.
+   * @param {Appointment} request Appointment details to update.
+   * @returns {Promise<ModifyAppointmentResponse>} Promise with the update status.
+   */
+  modifyAppointment(request: Appointment): Promise<ModifyAppointmentResponse> {
+    return this.grpcConnection.modifyAppointment(request);
+  }
+
+  /**
+   * Modifies an existing medical event.
+   * @param {MedicalEvent} request Medical event details to update.
+   * @returns {Promise<ModifyMedicalEventResponse>} Promise with the update status.
+   */
+  modifyMedicalEvent(
+    request: MedicalEvent,
+  ): Promise<ModifyMedicalEventResponse> {
+    return this.grpcConnection.modifyMedicalEvent(request);
+  }
+
+  /**
+   * Modifies an existing medical exam.
+   * @param {MedicalExam} request Medical exam details to update.
+   * @returns {Promise<ModifyMedicalExamResponse>} Promise with the update status.
+   */
+  modifyMedicalExam(request: MedicalExam): Promise<ModifyMedicalExamResponse> {
+    return this.grpcConnection.modifyMedicalExam(request);
+  }
+
+  /**
+   * Modifies a patient's medical information.
+   * @param {MedicalInfo} request Medical info to update.
+   * @returns {Promise<ModifyMedicalInfoResponse>} Promise with the update status.
+   */
+  modifyMedicalInfo(request: MedicalInfo): Promise<ModifyMedicalInfoResponse> {
+    return this.grpcConnection.modifyMedicalInfo(request);
   }
 }
