@@ -38,6 +38,7 @@ import type { MedicalInfo } from "../protobuf/frontend/medical_info";
 import type { Appointment } from "../protobuf/frontend/appointment";
 import type { MedicalExam } from "../protobuf/frontend/medical_exam";
 import type { MedicalEvent } from "../protobuf/frontend/medical_event";
+import type { GetAllMedicalExamRequest } from "../protobuf/frontend/patient_services";
 
 /** Enum representing the type of employee. */
 enum EmployeeType {
@@ -352,5 +353,9 @@ export default class EmployeeGRPC {
 
   getAllMedicalEvents(request: GetAllMedicalEventRequest) {
     return this.grpcConnection.getAllMedicalEvent(request);
+  }
+
+  getAllMedicalExams(request: GetAllMedicalExamRequest) {
+    return this.grpcConnection.getAllMedicalExam(request);
   }
 }
