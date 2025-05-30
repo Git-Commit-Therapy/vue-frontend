@@ -87,7 +87,6 @@ onBeforeMount(async () => {
       <v-card-title>{{ $t("createMedicalExam.title") }}</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submit">
-          <!-- dateTime -->
           <v-row align="center" justify="center">
             <v-col>
               <v-text-field
@@ -119,7 +118,6 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- examType -->
           <v-text-field
             v-model="form.examType"
             :label="$t('createMedicalExam.examType')"
@@ -128,7 +126,6 @@ onBeforeMount(async () => {
             required
           />
 
-          <!-- medicalReport -->
           <v-textarea
             v-model="form.medicalReport"
             :label="$t('createMedicalExam.medicalReport')"
@@ -137,7 +134,6 @@ onBeforeMount(async () => {
             required
           />
 
-          <!-- patient -->
           <v-row align="center" justify="center">
             <v-col>
               <v-autocomplete
@@ -173,7 +169,6 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- medicalEvent -->
           <v-row align="center" justify="center">
             <v-col>
               <v-select
@@ -207,7 +202,6 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- Submit -->
           <v-btn type="submit" color="primary" class="mt-4">
             {{ $t("createMedicalExam.submit") }}
           </v-btn>
