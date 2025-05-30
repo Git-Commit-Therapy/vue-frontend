@@ -38,15 +38,8 @@ onBeforeMount(async () => {
       <v-card-item>
         <v-card-title>{{ nameSurname }} </v-card-title>
       </v-card-item>
-      <v-card-item>
-        <v-btn
-          prepend-icon="mdi-calendar-month"
-          @click="navigateTo('/patient/appointments')"
-          >{{ t("appointments") }}</v-btn
-        >
-      </v-card-item>
       <v-card-text>
-        <v-timeline align="start" density="compact">
+        <v-timeline v-if="medicalInfo.length" align="start" density="compact">
           <v-timeline-item
             v-for="info in medicalInfo"
             :key="info.medicalInfoId"
@@ -57,6 +50,9 @@ onBeforeMount(async () => {
             </div>
           </v-timeline-item>
         </v-timeline>
+        <div v-else class="mb-4">
+          <strong>{{ t("noMedicalInfo") }}</strong>
+        </div>
       </v-card-text>
     </v-card>
   </div>
