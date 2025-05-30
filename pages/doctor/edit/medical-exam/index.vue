@@ -2,12 +2,12 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import type { MedicalEvent } from "~/composable/protobuf/frontend/medical_event";
+import type { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import type { Doctor } from "~/composable/protobuf/frontend/user";
 import {
-  GetMedicalEventsFromDoctorRequest,
-  GetMedicalEventsFromDoctorResponse,
+  GetMedicalExamsFromDoctorRequest,
+  GetMedicalExamsFromDoctorResponse,
 } from "~/composable/protobuf/frontend/employee_services";
 
 const router = useRouter();
@@ -17,24 +17,24 @@ const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const fromDate = ref<Date | null>(null);
 const toDate = ref<Date | null>(null);
 const loading = ref(false);
-const events = ref<MedicalEvent[]>([]);
+const exams = ref<MedicalExam[]>([]);
 const currentDoctor = ref<Doctor>();
 const now = new Date();
 
-const fetchEvents = async () => {
+const fetchExams = async () => {
   loading.value = true;
-  const req: GetMedicalEventsFromDoctorRequest = {
+  const req: GetMedicalExamsFromDoctorRequest = {
     doctor: currentDoctor.value,
     fromDate: fromDate.value ?? undefined,
     toDate: toDate.value ?? undefined,
   };
 
   try {
-    const res: GetMedicalEventsFromDoctorResponse =
-      await employeeGRPC.getMedicalEventsFromDoctor(req);
-    events.value = res.medicalEvents;
+    const res: GetMedicalExamsFromDoctorResponse =
+      await employeeGRPC.getMedicalExamsFromDoctor(req);
+    exams.value = res.medicalExams;
   } catch (err) {
-    console.error("Failed to fetch medical events", err);
+    console.error("Failed to fetch medical exams", err);
   } finally {
     loading.value = false;
   }
@@ -42,18 +42,18 @@ const fetchEvents = async () => {
 
 const canEdit = (date: string | Date) => new Date(date) > now;
 
-const editEvent = (event: MedicalEvent) => {
-  localStorage.setItem("currentMedicalEvent", JSON.stringify(event));
-  router.push(`/doctor/edit/medical-event/${event.medicalEventId}`);
+const editExam = (exam: MedicalExam) => {
+  localStorage.setItem("currentMedicalExam", JSON.stringify(exam));
+  router.push(`/doctor/edit/medical-exam/${exam.medicalExamId}`);
 };
 </script>
 
 <template>
   <div class="p-4 space-y-4">
     <VCard>
-      <VCardTitle>{{ t("searchMedicalEvents") }}</VCardTitle>
+      <VCardTitle>{{ t("searchMedicalExams") }}</VCardTitle>
       <VCardText>
-        <VForm @submit.prevent="fetchEvents">
+        <VForm @submit.prevent="fetchExams">
           <VRow>
             <VCol cols="12" md="6">
               <VDatePicker v-model="fromDate" label="From date" />
@@ -69,21 +69,21 @@ const editEvent = (event: MedicalEvent) => {
       </VCardText>
     </VCard>
 
-    <div v-if="events.length">
-      <VCard v-for="event in events" :key="event.medicalEventId" class="my-2">
+    <div v-if="exams.length">
+      <VCard v-for="exam in exams" :key="exam.medicalExamId" class="my-2">
         <VCardTitle>
-          {{ event.patient?.user?.name }} {{ event.patient?.user?.surname }} —
-          {{ event.eventDate }}
+          {{ exam.patient?.user?.name }} {{ exam.patient?.user?.surname }} —
+          {{ exam.examDate }}
         </VCardTitle>
         <VCardActions>
           <VBtn
-            v-if="canEdit(event.eventDate!)"
+            v-if="canEdit(exam.examDate!)"
             color="warning"
-            @click="editEvent(event)"
+            @click="editExam(exam)"
           >
             {{ t("edit") }}
           </VBtn>
-          <span v-else>{{ t("pastEvent") }}</span>
+          <span v-else>{{ t("pastExam") }}</span>
         </VCardActions>
       </VCard>
     </div>

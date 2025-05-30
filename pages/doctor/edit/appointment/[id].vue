@@ -28,7 +28,7 @@ const rules = {
 
 onBeforeMount(async () => {
   raw.value = localStorage.getItem("currentAppointment");
-  if (!raw) return;
+  if (!raw.value) return;
 
   appointment.value = JSON.parse(raw.value) as Appointment;
   if (appointment.value.appointmentId !== Number(id)) {

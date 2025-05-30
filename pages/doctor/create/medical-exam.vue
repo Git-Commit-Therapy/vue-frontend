@@ -75,9 +75,14 @@ const submit = async () => {
 };
 
 onBeforeMount(async () => {
-  currentDoctor.value = await employeeGRPC.getDoctor(); // ← Fill this stub
-  patients.value = (await employeeGRPC.getAllPatients()).patients; // ← Fill this stub
-  medicalEvents.value = (await employeeGRPC.getAllMedicalEvents()).events; // ← Fill this stub
+  currentDoctor.value = await employeeGRPC.getDoctor();
+  patients.value = (await employeeGRPC.getAllPatients()).patients;
+  medicalEvents.value = (
+    await employeeGRPC.getAllMedicalEvents({
+      fromDate: undefined,
+      toDate: undefined,
+    })
+  ).medicalEvent;
   form.value.doctor = currentDoctor.value;
 });
 </script>

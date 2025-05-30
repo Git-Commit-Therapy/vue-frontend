@@ -14,6 +14,7 @@ import {
   CreateStaffResponse,
   EmployeeServicesDefinition,
   GetAllDoctorsResponse,
+  GetAllMedicalEventRequest,
   GetAllPatientsResponse,
   GetAllStaffsResponse,
   GetAllWardResponse,
@@ -347,5 +348,9 @@ export default class EmployeeGRPC {
    */
   modifyMedicalInfo(request: MedicalInfo): Promise<ModifyMedicalInfoResponse> {
     return this.grpcConnection.modifyMedicalInfo(request);
+  }
+
+  getAllMedicalEvents(request: GetAllMedicalEventRequest) {
+    return this.grpcConnection.getAllMedicalEvent(request);
   }
 }

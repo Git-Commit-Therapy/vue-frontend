@@ -17,8 +17,9 @@ const raw = ref();
 const medicalEvent = ref<MedicalEvent>();
 const valid = ref(false);
 const patients = ref<Patient[]>([]);
+// TODO: FIX MISMATCH
 const form = ref<MedicalEvent>({
-  medicalEventId: -1,
+  eventId: -1,
   patient: undefined,
   eventDate: undefined,
   description: "",
