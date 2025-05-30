@@ -1,29 +1,56 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
+import env from "~/utils/env";
 import EmployeeGRPC from "@/composable/clients/employeeGrpcClient";
 import {
   SeverityCode,
   type MedicalEvent,
 } from "@/composable/protobuf/frontend/medical_event";
-import type { Doctor, Patient } from "~/composable/protobuf/frontend/user";
-import type { Ward } from "~/composable/protobuf/frontend/ward";
+import type { Doctor, Patient } from "@/composable/protobuf/frontend/user";
+import type { Ward } from "@/composable/protobuf/frontend/ward";
+import type { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 
 const { t } = useI18n();
 const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
-const currentDoctor = ref<Doctor | undefined>(undefined);
-const form = ref({
-  eventId: 0,
-  fromDateTime: "",
-  toDateTime: "",
+
+const searchPatient = ref("");
+const patients = ref<Patient[]>([]);
+const doctor = ref<Doctor | undefined>();
+const medicalExams = ref<MedicalExam[]>([]);
+const isSubmitting = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
+
+const form = reactive<MedicalEvent>({
+  eventId: -1,
+  fromDateTime: undefined,
+  toDateTime: undefined,
   severityCode: SeverityCode.UNRECOGNIZED,
   dischargeLetter: "",
   patient: undefined,
-  ward: null as any,
+  ward: undefined,
   medicalExamIds: [],
 });
-const medicalExams = ref<number[]>([]);
-const patients = ref<Patient[]>([]);
+
+const touched = reactive({
+  patient: false,
+  severityCode: false,
+  dischargeLetter: false,
+});
+
+const errors = computed(() => ({
+  patient: touched.patient && !form.patient ? t("validation.required") : "",
+  severityCode:
+    touched.severityCode && form.severityCode === SeverityCode.UNRECOGNIZED
+      ? t("validation.required")
+      : "",
+  dischargeLetter:
+    touched.dischargeLetter && !form.dischargeLetter.trim()
+      ? t("validation.required")
+      : "",
+}));
+
 const severityOptions = [
   { label: t("severity.white"), value: SeverityCode.WHITE },
   { label: t("severity.green"), value: SeverityCode.GREEN },
@@ -32,86 +59,94 @@ const severityOptions = [
   { label: t("severity.red"), value: SeverityCode.RED },
 ];
 
+onBeforeMount(async () => {
+  try {
+    doctor.value = await employeeGRPC.getDoctor();
+    form.ward = doctor.value?.ward;
+    patients.value = (await employeeGRPC.getAllPatients()).patients;
+    medicalExams.value = (
+      await employeeGRPC.getAllMedicalExams({
+        fromDate: undefined,
+        toDate: undefined,
+      })
+    ).medicalExams;
+  } catch (err) {
+    showError.value = true;
+    errorMessage.value = t("error.fetch");
+    console.error(err);
+  }
+});
+
 const disabledFields = reactive({
   fromDateTime: false,
   toDateTime: false,
   patient: false,
-  ward: false,
 });
 
-const touched = reactive({
-  severityCode: false,
-  dischargeLetter: false,
-});
+async function submitForm() {
+  touched.severityCode = true;
+  touched.dischargeLetter = true;
 
-const errors = computed(() => ({
-  severityCode:
-    touched.severityCode &&
-    form.value.severityCode === SeverityCode.UNRECOGNIZED
-      ? t("validation.required")
-      : "",
-  dischargeLetter:
-    touched.dischargeLetter && !form.value.dischargeLetter.trim()
-      ? t("validation.required")
-      : "",
-}));
+  if (errors.value.severityCode || errors.value.dischargeLetter) return;
 
-const submit = async () => {
-  // We are always doing a new Date because we just want to not
-  // have type mismatches, this ensures it.
-  const medicalEvent: MedicalEvent = {
-    eventId: -1,
-    fromDateTime: disabledFields.fromDateTime
-      ? undefined
-      : form.value.fromDateTime
-        ? new Date(form.value.fromDateTime)
-        : undefined,
-    toDateTime: disabledFields.toDateTime
-      ? undefined
-      : form.value.toDateTime
-        ? new Date(form.value.toDateTime)
-        : undefined,
-    severityCode: form.value.severityCode,
-    dischargeLetter: form.value.dischargeLetter,
-    patient: disabledFields.patient ? undefined : form.value.patient,
-    ward: currentDoctor.value?.ward,
-    medicalExamIds: form.value.medicalExamIds,
-  };
+  form.fromDateTime = form.fromDateTime
+    ? new Date(form.fromDateTime)
+    : undefined;
+  form.toDateTime = form.toDateTime ? new Date(form.toDateTime) : undefined;
 
   try {
-    const response = await employeeGRPC.createMedicalEvent(medicalEvent);
-    console.log("Success:", response);
-  } catch (error) {
-    console.error("Error creating medical event:", error);
+    isSubmitting.value = true;
+    const response = await employeeGRPC.createMedicalEvent(form);
+    console.log("Created:", response);
+  } catch (err) {
+    showError.value = true;
+    errorMessage.value = t("createMedicalEvent.submitError");
+    console.error(err);
+  } finally {
+    isSubmitting.value = false;
   }
-};
-onBeforeMount(async () => {
-  currentDoctor.value = await employeeGRPC.getDoctor();
-  patients.value = (await employeeGRPC.getAllPatients()).patients;
-  form.value.ward = currentDoctor.value.ward;
-});
+}
+function setError(state: boolean) {
+  showError.value = state;
+}
 </script>
 <template>
-  <v-container class="py-10">
-    <v-card class="mx-auto" max-width="600">
-      <v-card-title>{{ $t("createMedicalEvent.title") }}</v-card-title>
-      <v-card-text>
-        <v-form ref="form" @submit.prevent="submit">
-          <v-row align="center" justify="center">
-            <v-col>
+  <v-snackbar
+    v-model="showError"
+    timeout="5000"
+    color="error"
+    location="top right"
+  >
+    {{ errorMessage }}
+    <template #actions>
+      <v-btn variant="text" icon="mdi-close" @click="setError(false)" />
+    </template>
+  </v-snackbar>
+
+  <v-card class="mx-auto my-4" max-width="800">
+    <v-card-title class="text-h5">
+      {{ t("createMedicalEvent.title") }}
+    </v-card-title>
+
+    <v-card-text>
+      <form @submit.prevent="submitForm">
+        <v-container>
+          <v-row>
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="form.fromDateTime"
-                :label="$t('createMedicalEvent.fromDateTime')"
+                :label="t('createMedicalEvent.fromDateTime')"
                 type="datetime-local"
+                variant="outlined"
                 :disabled="disabledFields.fromDateTime"
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+
+            <v-col cols="12" md="6" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.fromDateTime ? 'error' : 'grey'"
                 @click="
                   disabledFields.fromDateTime = !disabledFields.fromDateTime
@@ -126,22 +161,22 @@ onBeforeMount(async () => {
                 </v-icon>
               </v-btn>
             </v-col>
-          </v-row>
-          <v-row align="center" justify="center">
-            <v-col>
+
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="form.toDateTime"
-                :label="$t('createMedicalEvent.toDateTime')"
+                :label="t('createMedicalEvent.toDateTime')"
                 type="datetime-local"
+                variant="outlined"
                 :disabled="disabledFields.toDateTime"
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+
+            <v-col cols="12" md="6" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.toDateTime ? 'error' : 'grey'"
                 @click="disabledFields.toDateTime = !disabledFields.toDateTime"
               >
@@ -154,36 +189,47 @@ onBeforeMount(async () => {
                 </v-icon>
               </v-btn>
             </v-col>
-          </v-row>
-          <v-select
-            v-model="form.severityCode"
-            :label="$t('createMedicalEvent.severityCode')"
-            :items="severityOptions"
-            item-title="label"
-            item-value="value"
-            :error="Boolean(errors.severityCode)"
-            :error-messages="errors.severityCode"
-            @blur="touched.severityCode = true"
-            required
-          />
-          <v-row align="center" justify="center">
-            <v-col>
+
+            <v-col cols="12">
               <v-select
-                v-model="form.patient"
-                :label="$t('createMedicalEvent.patient')"
-                :items="patients"
+                v-model="form.severityCode"
+                :label="t('createMedicalEvent.severityCode')"
+                :items="severityOptions"
                 item-title="label"
                 item-value="value"
-                :disabled="disabledFields.patient"
+                variant="outlined"
+                :error="Boolean(errors.severityCode)"
+                :error-messages="
+                  touched.severityCode ? errors.severityCode : ''
+                "
+                @blur="touched.severityCode = true"
                 required
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+
+            <v-col cols="12" md="10">
+              <v-autocomplete
+                v-model="form.patient"
+                :items="patients"
+                :label="t('createMedicalEvent.patient')"
+                :item-title="showFullName"
+                item-value="id"
+                return-object
+                clearable
+                variant="outlined"
+                :search-input.sync="searchPatient"
+                :disabled="disabledFields.patient"
+                :error="Boolean(errors.patient)"
+                :error-messages="touched.patient ? errors.patient : ''"
+                @blur="touched.patient = true"
+              />
+            </v-col>
+
+            <v-col cols="12" md="2" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.patient ? 'error' : 'grey'"
                 @click="disabledFields.patient = !disabledFields.patient"
               >
@@ -196,31 +242,48 @@ onBeforeMount(async () => {
                 </v-icon>
               </v-btn>
             </v-col>
-          </v-row>
-          <v-textarea
-            v-model="form.dischargeLetter"
-            :label="$t('createMedicalEvent.dischargeLetter')"
-            :error="Boolean(errors.dischargeLetter)"
-            error-messages="errors.dischargeLetter"
-            @blur="touched.dischargeLetter = true"
-          />
-          <v-select
-            v-model="form.medicalExamIds"
-            :label="$t('createMedicalEvent.medicalExamIds')"
-            :items="medicalExams"
-            item-title="label"
-            item-value="id"
-            multiple
-            chips
-            hint="Selected: {{ form.medicalExamIds.join(', ') || 'None' }}"
-            persistent-hint
-          />
 
-          <v-btn type="submit" color="primary" class="mt-4">
-            {{ $t("createMedicalEvent.submit") }}
-          </v-btn>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+            <v-col cols="12">
+              <v-textarea
+                v-model="form.dischargeLetter"
+                :label="t('createMedicalEvent.dischargeLetter')"
+                variant="outlined"
+                :error="Boolean(errors.dischargeLetter)"
+                :error-messages="
+                  touched.dischargeLetter ? errors.dischargeLetter : ''
+                "
+                @blur="touched.dischargeLetter = true"
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <v-select
+                v-model="form.medicalExamIds"
+                :label="t('createMedicalEvent.medicalExamIds')"
+                :items="medicalExams"
+                :item-title="(exam) => `#${exam.examId} - ${exam.examType}`"
+                item-value="examId"
+                multiple
+                chips
+                variant="outlined"
+                hint="Selected: {{ form.medicalExamIds.join(', ') || 'None' }}"
+                persistent-hint
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <v-btn
+                type="submit"
+                color="primary"
+                :loading="isSubmitting"
+                block
+              >
+                {{ t("createMedicalEvent.submit") }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </form>
+    </v-card-text>
+  </v-card>
 </template>

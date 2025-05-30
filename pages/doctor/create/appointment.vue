@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
+import { showFullName } from "~/utils/showFullName";
+import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import type { Appointment } from "~/composable/protobuf/frontend/appointment";
@@ -10,7 +11,7 @@ const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const { t } = useI18n();
 
 const appointment = reactive<Appointment>({
-  appointmentId: -1,
+  appointmentId: 0,
   dateTime: undefined,
   staff: undefined,
   doctor: undefined,
@@ -30,10 +31,17 @@ const touched = reactive({ dateTime: false, patient: false, staff: false });
 const errors = reactive({ dateTime: "", patient: "", staff: "" });
 
 const isFormValid = computed(() => {
-  return appointment.dateTime && appointment.patient && appointment.staff;
+  return (
+    appointment.dateTime &&
+    appointment.patient &&
+    appointment.staff &&
+    !errors.dateTime &&
+    !errors.patient &&
+    !errors.staff
+  );
 });
 
-onMounted(() => {
+onBeforeMount(() => {
   fetchAllPatients();
   fetchAllStaff();
 });
@@ -68,11 +76,14 @@ async function submitForm() {
   if (!isFormValid.value) return;
 
   try {
-    appointment.doctor = undefined;
+    appointment.doctor = await employeeGRPC.getDoctor();
+    console.log(appointment.doctor);
+    appointment.dateTime = new Date(appointment.dateTime!);
     isSubmitting.value = true;
-    await employeeGRPC.createAppointment(appointment);
-    resetForm();
-  } catch {
+    const res = await employeeGRPC.createAppointment(appointment);
+    if (res.success) resetForm();
+  } catch (e) {
+    console.error(e);
     showError.value = true;
     errorMessage.value = t("appointment.submitError");
   } finally {
@@ -133,7 +144,7 @@ function setError(value: boolean) {
                 :items="patients"
                 :search-input.sync="searchPatient"
                 :label="t('appointment.patient')"
-                item-title="user.name"
+                :item-title="showFullName"
                 item-value="id"
                 return-object
                 clearable
@@ -150,7 +161,7 @@ function setError(value: boolean) {
                 :items="staffList"
                 :search-input.sync="searchStaff"
                 :label="t('appointment.staff')"
-                item-title="user.name"
+                :item-title="showFullName"
                 item-value="id"
                 return-object
                 clearable
@@ -166,7 +177,6 @@ function setError(value: boolean) {
                 type="submit"
                 color="primary"
                 :loading="isSubmitting"
-                :disabled="!isFormValid"
                 block
               >
                 {{ t("appointment.submit") }}

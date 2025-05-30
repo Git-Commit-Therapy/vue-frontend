@@ -9,11 +9,11 @@ import type { MedicalEvent } from "@/composable/protobuf/frontend/medical_event"
 const { t } = useI18n();
 const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 
-const currentDoctor = ref<Doctor | undefined>(undefined);
+const currentDoctor = ref<Doctor>();
 const patients = ref<Patient[]>([]);
 const medicalEvents = ref<MedicalEvent[]>([]);
 
-const form = ref<MedicalExam>({
+const form = reactive<MedicalExam>({
   examId: -1,
   dateTime: undefined,
   medicalReport: "",
@@ -34,40 +34,39 @@ const touched = reactive({
   dateTime: false,
   medicalReport: false,
   examType: false,
+  doctor: false,
+  patient: false,
+  medicalEvent: false,
 });
 
 const errors = computed(() => ({
-  dateTime:
-    touched.dateTime && !form.value.dateTime ? t("validation.required") : "",
+  dateTime: touched.dateTime && !form.dateTime ? t("validation.required") : "",
   medicalReport:
-    touched.medicalReport && !form.value.medicalReport.trim()
+    touched.medicalReport && !form.medicalReport.trim()
       ? t("validation.required")
       : "",
   examType:
-    touched.examType && !form.value.examType.trim()
-      ? t("validation.required")
-      : "",
+    touched.examType && !form.examType.trim() ? t("validation.required") : "",
 }));
+
+const toggleField = (field: keyof typeof disabledFields) => {
+  disabledFields[field] = !disabledFields[field];
+};
 
 const submit = async () => {
   const payload: MedicalExam = {
-    examId: -1,
-    dateTime: disabledFields.dateTime
-      ? undefined
-      : form.value.dateTime
-        ? new Date(form.value.dateTime)
-        : undefined,
-    medicalReport: form.value.medicalReport,
-    examType: form.value.examType,
-    doctor: disabledFields.doctor ? undefined : form.value.doctor,
-    patient: disabledFields.patient ? undefined : form.value.patient,
-    medicalEvent: disabledFields.medicalEvent
-      ? undefined
-      : form.value.medicalEvent,
+    ...form,
+    dateTime:
+      disabledFields.dateTime || !form.dateTime
+        ? undefined
+        : new Date(form.dateTime),
+    doctor: disabledFields.doctor ? undefined : form.doctor,
+    patient: disabledFields.patient ? undefined : form.patient,
+    medicalEvent: disabledFields.medicalEvent ? undefined : form.medicalEvent,
   };
 
   try {
-    const response = await employeeGRPC.createMedicalExam(payload); // ← Fill this stub
+    const response = await employeeGRPC.createMedicalExam(payload);
     console.log("Exam created:", response);
   } catch (error) {
     console.error("Failed to create exam:", error);
@@ -83,7 +82,7 @@ onBeforeMount(async () => {
       toDate: undefined,
     })
   ).medicalEvent;
-  form.value.doctor = currentDoctor.value;
+  form.doctor = currentDoctor.value;
 });
 </script>
 
@@ -92,9 +91,8 @@ onBeforeMount(async () => {
     <v-card class="mx-auto" max-width="600">
       <v-card-title>{{ $t("createMedicalExam.title") }}</v-card-title>
       <v-card-text>
-        <v-form ref="form" @submit.prevent="submit">
-          <!-- dateTime -->
-          <v-row align="center" justify="center">
+        <v-form @submit.prevent="submit">
+          <v-row>
             <v-col>
               <v-text-field
                 v-model="form.dateTime"
@@ -105,14 +103,13 @@ onBeforeMount(async () => {
                 @blur="touched.dateTime = true"
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+            <v-col cols="auto">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.dateTime ? 'error' : 'grey'"
-                @click="disabledFields.dateTime = !disabledFields.dateTime"
+                @click="toggleField('dateTime')"
               >
                 <v-icon>
                   {{
@@ -125,7 +122,6 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- examType -->
           <v-text-field
             v-model="form.examType"
             :label="$t('createMedicalExam.examType')"
@@ -134,7 +130,6 @@ onBeforeMount(async () => {
             required
           />
 
-          <!-- medicalReport -->
           <v-textarea
             v-model="form.medicalReport"
             :label="$t('createMedicalExam.medicalReport')"
@@ -143,8 +138,7 @@ onBeforeMount(async () => {
             required
           />
 
-          <!-- patient -->
-          <v-row align="center" justify="center">
+          <v-row>
             <v-col>
               <v-select
                 v-model="form.patient"
@@ -155,14 +149,13 @@ onBeforeMount(async () => {
                 :disabled="disabledFields.patient"
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+            <v-col cols="auto">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.patient ? 'error' : 'grey'"
-                @click="disabledFields.patient = !disabledFields.patient"
+                @click="toggleField('patient')"
               >
                 <v-icon>
                   {{
@@ -175,8 +168,7 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- medicalEvent -->
-          <v-row align="center" justify="center">
+          <v-row>
             <v-col>
               <v-select
                 v-model="form.medicalEvent"
@@ -187,16 +179,13 @@ onBeforeMount(async () => {
                 :disabled="disabledFields.medicalEvent"
               />
             </v-col>
-            <v-col cols="auto" class="pl-2">
+            <v-col cols="auto">
               <v-btn
                 icon
                 size="small"
                 variant="text"
-                class="mt-2"
                 :color="disabledFields.medicalEvent ? 'error' : 'grey'"
-                @click="
-                  disabledFields.medicalEvent = !disabledFields.medicalEvent
-                "
+                @click="toggleField('medicalEvent')"
               >
                 <v-icon>
                   {{
@@ -209,7 +198,6 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <!-- Submit -->
           <v-btn type="submit" color="primary" class="mt-4">
             {{ $t("createMedicalExam.submit") }}
           </v-btn>
