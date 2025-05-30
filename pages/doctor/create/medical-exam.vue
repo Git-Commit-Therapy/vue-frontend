@@ -9,10 +9,10 @@ import type { MedicalEvent } from "@/composable/protobuf/frontend/medical_event"
 const { t } = useI18n();
 const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 
-const currentDoctor = ref<Doctor>();
+const currentDoctor = ref<Doctor | undefined>(undefined);
 const patients = ref<Patient[]>([]);
 const medicalEvents = ref<MedicalEvent[]>([]);
-
+const searchPatient = ref<string>("");
 const form = reactive<MedicalExam>({
   examId: -1,
   dateTime: undefined,
@@ -25,7 +25,6 @@ const form = reactive<MedicalExam>({
 
 const disabledFields = reactive({
   dateTime: false,
-  doctor: false,
   patient: false,
   medicalEvent: false,
 });
@@ -34,9 +33,6 @@ const touched = reactive({
   dateTime: false,
   medicalReport: false,
   examType: false,
-  doctor: false,
-  patient: false,
-  medicalEvent: false,
 });
 
 const errors = computed(() => ({
@@ -49,18 +45,16 @@ const errors = computed(() => ({
     touched.examType && !form.examType.trim() ? t("validation.required") : "",
 }));
 
-const toggleField = (field: keyof typeof disabledFields) => {
-  disabledFields[field] = !disabledFields[field];
-};
-
 const submit = async () => {
   const payload: MedicalExam = {
-    ...form,
+    examId: -1,
     dateTime:
       disabledFields.dateTime || !form.dateTime
         ? undefined
         : new Date(form.dateTime),
-    doctor: disabledFields.doctor ? undefined : form.doctor,
+    medicalReport: form.medicalReport,
+    examType: form.examType,
+    doctor: currentDoctor.value,
     patient: disabledFields.patient ? undefined : form.patient,
     medicalEvent: disabledFields.medicalEvent ? undefined : form.medicalEvent,
   };
@@ -75,6 +69,8 @@ const submit = async () => {
 
 onBeforeMount(async () => {
   currentDoctor.value = await employeeGRPC.getDoctor();
+  form.doctor = currentDoctor.value;
+
   patients.value = (await employeeGRPC.getAllPatients()).patients;
   medicalEvents.value = (
     await employeeGRPC.getAllMedicalEvents({
@@ -82,7 +78,6 @@ onBeforeMount(async () => {
       toDate: undefined,
     })
   ).medicalEvent;
-  form.doctor = currentDoctor.value;
 });
 </script>
 
@@ -92,7 +87,8 @@ onBeforeMount(async () => {
       <v-card-title>{{ $t("createMedicalExam.title") }}</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submit">
-          <v-row>
+          <!-- dateTime -->
+          <v-row align="center" justify="center">
             <v-col>
               <v-text-field
                 v-model="form.dateTime"
@@ -103,13 +99,14 @@ onBeforeMount(async () => {
                 @blur="touched.dateTime = true"
               />
             </v-col>
-            <v-col cols="auto">
+            <v-col cols="auto" class="pl-2">
               <v-btn
                 icon
                 size="small"
                 variant="text"
+                class="mt-2"
                 :color="disabledFields.dateTime ? 'error' : 'grey'"
-                @click="toggleField('dateTime')"
+                @click="disabledFields.dateTime = !disabledFields.dateTime"
               >
                 <v-icon>
                   {{
@@ -122,6 +119,7 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
+          <!-- examType -->
           <v-text-field
             v-model="form.examType"
             :label="$t('createMedicalExam.examType')"
@@ -130,6 +128,7 @@ onBeforeMount(async () => {
             required
           />
 
+          <!-- medicalReport -->
           <v-textarea
             v-model="form.medicalReport"
             :label="$t('createMedicalExam.medicalReport')"
@@ -138,24 +137,30 @@ onBeforeMount(async () => {
             required
           />
 
-          <v-row>
+          <!-- patient -->
+          <v-row align="center" justify="center">
             <v-col>
-              <v-select
+              <v-autocomplete
                 v-model="form.patient"
-                :label="$t('createMedicalExam.patient')"
                 :items="patients"
-                item-title="label"
-                item-value="value"
+                :search-input.sync="searchPatient"
+                :label="$t('createMedicalExam.patient')"
+                :item-title="showFullName"
+                item-value="id"
+                return-object
+                clearable
+                variant="outlined"
                 :disabled="disabledFields.patient"
               />
             </v-col>
-            <v-col cols="auto">
+            <v-col cols="auto" class="pl-2">
               <v-btn
                 icon
                 size="small"
                 variant="text"
+                class="mt-2"
                 :color="disabledFields.patient ? 'error' : 'grey'"
-                @click="toggleField('patient')"
+                @click="disabledFields.patient = !disabledFields.patient"
               >
                 <v-icon>
                   {{
@@ -168,7 +173,8 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
-          <v-row>
+          <!-- medicalEvent -->
+          <v-row align="center" justify="center">
             <v-col>
               <v-select
                 v-model="form.medicalEvent"
@@ -179,13 +185,16 @@ onBeforeMount(async () => {
                 :disabled="disabledFields.medicalEvent"
               />
             </v-col>
-            <v-col cols="auto">
+            <v-col cols="auto" class="pl-2">
               <v-btn
                 icon
                 size="small"
                 variant="text"
+                class="mt-2"
                 :color="disabledFields.medicalEvent ? 'error' : 'grey'"
-                @click="toggleField('medicalEvent')"
+                @click="
+                  disabledFields.medicalEvent = !disabledFields.medicalEvent
+                "
               >
                 <v-icon>
                   {{
@@ -198,6 +207,7 @@ onBeforeMount(async () => {
             </v-col>
           </v-row>
 
+          <!-- Submit -->
           <v-btn type="submit" color="primary" class="mt-4">
             {{ $t("createMedicalExam.submit") }}
           </v-btn>
