@@ -77,7 +77,6 @@ async function submitForm() {
 
   try {
     appointment.doctor = await employeeGRPC.getDoctor();
-    console.log(appointment.doctor);
     appointment.dateTime = new Date(appointment.dateTime!);
     isSubmitting.value = true;
     const res = await employeeGRPC.createAppointment(appointment);
