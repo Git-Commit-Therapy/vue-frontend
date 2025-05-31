@@ -15,6 +15,7 @@ import {
   EmployeeServicesDefinition,
   GetAllDoctorsResponse,
   GetAllMedicalEventRequest,
+  GetAllMedicalEventResponse,
   GetAllPatientsResponse,
   GetAllStaffsResponse,
   GetAllWardResponse,
@@ -29,6 +30,15 @@ import {
   ModifyStaffResponse,
   type EmployeeServicesClient,
 } from "~/composable/protobuf/frontend/employee_services";
+import {
+  EmergencyWardServicesDefinition,
+  type EmergencyWardServicesClient,
+  AddPatientRequest,
+  AddPatientResponse,
+  TransferPatientRequest,
+  RemovePatientRequest,
+  CallPatientRequest,
+} from "~/composable/protobuf/frontend/emergency_ward_services";
 import type {
   Doctor,
   Patient,
@@ -38,7 +48,11 @@ import type { MedicalInfo } from "../protobuf/frontend/medical_info";
 import type { Appointment } from "../protobuf/frontend/appointment";
 import type { MedicalExam } from "../protobuf/frontend/medical_exam";
 import type { MedicalEvent } from "../protobuf/frontend/medical_event";
-import type { GetAllMedicalExamRequest } from "../protobuf/frontend/patient_services";
+import type {
+  GetAllMedicalExamRequest,
+  GetAllMedicalExamResponse,
+} from "../protobuf/frontend/patient_services";
+import type { Empty } from "../protobuf/frontend/google/protobuf/empty";
 
 /** Enum representing the type of employee. */
 enum EmployeeType {
@@ -51,6 +65,7 @@ enum EmployeeType {
 export default class EmployeeGRPC {
   private static instance: EmployeeGRPC | null = null;
   private readonly grpcConnection: EmployeeServicesClient;
+  private readonly emergencyWardConnection: EmergencyWardServicesClient;
 
   private type: EmployeeType = EmployeeType.UNKNOWN;
 
@@ -60,6 +75,8 @@ export default class EmployeeGRPC {
    */
   private constructor(url: string) {
     this.grpcConnection = this.createEmployeesGrpcClient(url);
+    this.emergencyWardConnection = this.createEmergencyWardGrpcClient(url);
+
     const tmpRoles: string[] = getUserRoles(useAuthStore().getAccessToken());
     if (tmpRoles.includes("staff")) this.type = EmployeeType.STAFF;
     if (tmpRoles.includes("doctor")) this.type = EmployeeType.DOCTOR;
@@ -111,6 +128,34 @@ export default class EmployeeGRPC {
   }
 
   /**
+   * Creates a gRPC connection to the emergency ward services.
+   * @param {string} url URL of the gRPC server.
+   * @returns {EmergencyWardServicesClient} Connection to the emergency ward gRPC services.
+   * @throws {Error} If the JWT is missing or invalid.
+   */
+  private createEmergencyWardGrpcClient(
+    url: string,
+  ): EmergencyWardServicesClient {
+    const channel: Channel = createChannel(url);
+    const authStore = useAuthStore();
+    if (!authStore.isValidToken()) {
+      throw new Error("Error: JWT is invalid.");
+    }
+    return createClientFactory()
+      .use((call, options) => {
+        const token = authStore.getAccessToken();
+        return call.next(call.request, {
+          ...options,
+          metadata: Metadata(options.metadata).set(
+            "Authorization",
+            `Bearer ${token}`,
+          ),
+        });
+      })
+      .create(EmergencyWardServicesDefinition, channel);
+  }
+
+  /**
    * Retrieves the doctor associated to the JWT.
    * @returns {Promise<Doctor>} Promise resolving to a doctor.
    */
@@ -143,8 +188,8 @@ export default class EmployeeGRPC {
   }
 
   /**
-   * Retrieves all staff.
-   * @returns {Promise<GetAllWardResponse>} Promise resolving to the list of staff.
+   * Retrieves all staff members.
+   * @returns {Promise<GetAllStaffsResponse>} Promise resolving to the list of staff.
    */
   getAllStaff(): Promise<GetAllStaffsResponse> {
     return this.grpcConnection.getAllStaffs({});
@@ -221,8 +266,8 @@ export default class EmployeeGRPC {
   }
 
   /**
-   * Updates a medical information for a given patient.
-   * @param {updatedMedicalInfo} updatedMedicalInfo medical information for the patient.
+   * Updates medical information for a given patient.
+   * @param {MedicalInfo} updatedMedicalInfo Medical information for the patient.
    * @returns {Promise<ModifyMedicalInfoResponse>} Promise containing the status of the request.
    */
   updateMedicalInfo(
@@ -232,8 +277,8 @@ export default class EmployeeGRPC {
   }
 
   /**
-   * Creates a medical information for a given patient.
-   * @param {MedicalInfo} info medical information for the patient.
+   * Creates medical information for a given patient.
+   * @param {MedicalInfo} info Medical information for the patient.
    * @returns {Promise<CreateMedicalInfoResponse>} Promise containing the status of the request.
    */
   createMedicalInfo(info: MedicalInfo): Promise<CreateMedicalInfoResponse> {
@@ -351,11 +396,61 @@ export default class EmployeeGRPC {
     return this.grpcConnection.modifyMedicalInfo(request);
   }
 
-  getAllMedicalEvents(request: GetAllMedicalEventRequest) {
+  /**
+   * Retrieves all medical events based on the provided request.
+   * @param {GetAllMedicalEventRequest} request Request parameters for fetching medical events.
+   * @returns {Promise<GetAllMedicalEventResponse>} Promise containing the medical events response.
+   */
+  getAllMedicalEvents(
+    request: GetAllMedicalEventRequest,
+  ): Promise<GetAllMedicalEventResponse> {
     return this.grpcConnection.getAllMedicalEvent(request);
   }
 
-  getAllMedicalExams(request: GetAllMedicalExamRequest) {
+  /**
+   * Retrieves all medical exams based on the provided request.
+   * @param {GetAllMedicalExamRequest} request Request parameters for fetching medical exams.
+   * @returns {Promise<GetAllMedicalExamResponse>} Promise containing the medical exams response.
+   */
+  getAllMedicalExams(
+    request: GetAllMedicalExamRequest,
+  ): Promise<GetAllMedicalExamResponse> {
     return this.grpcConnection.getAllMedicalExam(request);
+  }
+
+  /**
+   * Adds a patient to the emergency ward with severity assessment.
+   * @param {AddPatientRequest} request Patient details including severity code and medical report.
+   * @returns {Promise<AddPatientResponse>} Promise containing patient ID and emergency ward code.
+   */
+  addEmergencyPatient(request: AddPatientRequest): Promise<AddPatientResponse> {
+    return this.emergencyWardConnection.addPatient(request);
+  }
+
+  /**
+   * Transfers a patient from emergency ward to a specific ward.
+   * @param {TransferPatientRequest} request Patient and target ward information.
+   * @returns {Promise<Empty>} Promise indicating transfer completion.
+   */
+  transferEmergencyPatient(request: TransferPatientRequest): Promise<Empty> {
+    return this.emergencyWardConnection.transferPatient(request);
+  }
+
+  /**
+   * Removes a patient from the emergency ward with discharge documentation.
+   * @param {RemovePatientRequest} request Patient details and discharge letter.
+   * @returns {Promise<Empty>} Promise indicating removal completion.
+   */
+  removeEmergencyPatient(request: RemovePatientRequest): Promise<Empty> {
+    return this.emergencyWardConnection.removePatient(request);
+  }
+
+  /**
+   * Calls a patient for their visit in the emergency ward.
+   * @param {CallPatientRequest} request Patient and ambulatory information.
+   * @returns {Promise<Empty>} Promise indicating the patient has been called.
+   */
+  callEmergencyPatientForVisit(request: CallPatientRequest): Promise<Empty> {
+    return this.emergencyWardConnection.callPatientForVisit(request);
   }
 }
