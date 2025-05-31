@@ -41,15 +41,6 @@ const severityCodes = ref<{ value: SeverityCode; title: string }[]>([
   { value: SeverityCode.RED, title: "Fatal" },
 ]);
 
-// Exam types - replace with your actual types
-const examTypes = ref<string[]>([
-  "General Consultation",
-  "Emergency Assessment",
-  "Follow-up",
-  "Specialist Referral",
-  "Diagnostic",
-]);
-
 // Validation
 const isFormValid = computed(() => {
   return (
