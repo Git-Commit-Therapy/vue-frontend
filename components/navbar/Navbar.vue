@@ -273,6 +273,41 @@ function toggleDrawer() {
             </template>
             <v-list-item-title>{{ $t("editMedicalInfo") }}</v-list-item-title>
           </v-list-item>
+
+          <v-divider class="my-2"></v-divider>
+
+          <v-list-subheader>{{ $t("emergency") }}</v-list-subheader>
+
+          <v-list-item to="/emergency/add" @click="isDrawerOpen = false">
+            <template v-slot:prepend>
+              <v-icon>mdi-account-plus</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("addPatient") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/emergency/call-for-visit"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-phone-alert</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("callForVisit") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/emergency/transfer" @click="isDrawerOpen = false">
+            <template v-slot:prepend>
+              <v-icon>mdi-ambulance</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("transferPatient") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/emergency/remove" @click="isDrawerOpen = false">
+            <template v-slot:prepend>
+              <v-icon>mdi-account-remove</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("removePatient") }}</v-list-item-title>
+          </v-list-item>
         </template>
       </v-list>
     </v-navigation-drawer>
