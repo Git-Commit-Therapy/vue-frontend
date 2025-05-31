@@ -125,7 +125,7 @@ function toggleDrawer() {
 
     <v-navigation-drawer v-model="isDrawerOpen" temporary>
       <v-list max-width="250">
-        <template v-if="hasRole('patient')">
+        <template v-if="hasRole('/patient')">
           <v-divider class="my-2"></v-divider>
 
           <v-list-subheader>{{ $t("patient") }}</v-list-subheader>
@@ -155,7 +155,7 @@ function toggleDrawer() {
             <v-list-item-title>{{ $t("eventList") }}</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="hasRole('staff')">
+        <template v-if="hasRole('/staff')">
           <v-divider class="my-2"></v-divider>
 
           <v-list-subheader>{{ $t("administration") }}</v-list-subheader>
@@ -185,6 +185,93 @@ function toggleDrawer() {
               <v-icon>mdi-account-tie</v-icon>
             </template>
             <v-list-item-title>{{ $t("manageStaff") }}</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="hasRole('/doctors')">
+          <v-divider class="my-2"></v-divider>
+
+          <v-list-subheader>{{ $t("doctor") }}</v-list-subheader>
+
+          <v-list-item
+            to="/doctor/create/appointment"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-calendar-plus</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("createAppointment") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/edit/appointment"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-calendar-edit</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("editAppointment") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/create/medical-event"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-calendar-clock-outline</v-icon>
+            </template>
+            <v-list-item-title>{{
+              $t("createMedicalEvent")
+            }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/edit/medical-event"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-calendar-clock</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("editMedicalEvent") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/create/medical-exam"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-file-document-plus</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("createMedicalExam") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/edit/medical-exam"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-file-document-edit</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("editMedicalExam") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/create/medical-info"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-information-outline</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("createMedicalInfo") }}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            to="/doctor/edit/medical-info"
+            @click="isDrawerOpen = false"
+          >
+            <template v-slot:prepend>
+              <v-icon>mdi-information</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("editMedicalInfo") }}</v-list-item-title>
           </v-list-item>
         </template>
       </v-list>
