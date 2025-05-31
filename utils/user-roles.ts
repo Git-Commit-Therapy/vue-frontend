@@ -4,7 +4,7 @@ export function getUserRoles(jwtToken: string): string[] {
   if (!jwtToken) return [];
   try {
     const decodedToken = jwtDecode(jwtToken) as AuthToken;
-    return Array.isArray(decodedToken.roles) ? decodedToken.roles : [""];
+    return Array.isArray(decodedToken.groups ) ? decodedToken.groups  : [""];
   } catch (error) {
     return [""];
   }
