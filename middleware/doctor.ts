@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware((to: RouteLocationNormalized) => {
   if (
     !authStore.isValidToken() &&
     !authStore.isDoctor() &&
-    !["/doctor"].includes(to.path)
+    !["/doctor", "/emergency"].includes(to.path)
   ) {
     console.log("[doctor.middleware] redirect to /login");
     return navigateTo("/login");
