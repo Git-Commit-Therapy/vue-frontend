@@ -38,6 +38,8 @@ import {
   TransferPatientRequest,
   RemovePatientRequest,
   CallPatientRequest,
+  type EmergencyWardPanelsServiceClient,
+  EmergencyWardPanelsServiceDefinition,
 } from "~/composable/protobuf/frontend/emergency_ward_services";
 import type {
   Doctor,
@@ -64,24 +66,24 @@ enum EmployeeType {
 /** Class representing employee-related gRPC services using a singleton pattern. */
 export default class EmployeeGRPC {
   private static instance: EmployeeGRPC | null = null;
-  private readonly grpcConnection: EmployeeServicesClient;
+  private readonly employeeConnection: EmployeeServicesClient;
   private readonly emergencyWardConnection: EmergencyWardServicesClient;
+  private readonly emergencyWardPanelConnection: EmergencyWardPanelsServiceClient;
 
-  private type: EmployeeType = EmployeeType.UNKNOWN;
+  private type: EmployeeType[] = [];
 
   /**
    * Private constructor to prevent direct construction calls with 'new'.
    * @param {string} url URL of the gRPC server.
    */
   private constructor(url: string) {
-    this.grpcConnection = this.createEmployeesGrpcClient(url);
+    this.employeeConnection = this.createEmployeesGrpcClient(url);
     this.emergencyWardConnection = this.createEmergencyWardGrpcClient(url);
-
+    this.emergencyWardPanelConnection =
+      this.createEmergencyWardPanelGrpcClient(url);
     const tmpRoles: string[] = getUserRoles(useAuthStore().getAccessToken());
-    if (tmpRoles.includes("staff")) this.type = EmployeeType.STAFF;
-    if (tmpRoles.includes("doctor")) this.type = EmployeeType.DOCTOR;
-    // But what if a user has multiple roles? Is it even possible?
-    // TODO: check if possible
+    if (tmpRoles.includes("/staff")) this.type.push(EmployeeType.STAFF);
+    if (tmpRoles.includes("/doctors")) this.type.push(EmployeeType.DOCTOR);
   }
 
   /**
@@ -156,11 +158,39 @@ export default class EmployeeGRPC {
   }
 
   /**
+   * Creates a gRPC connection to the emergency ward services.
+   * @param {string} url URL of the gRPC server.
+   * @returns {EmergencyWardServicesClient} Connection to the emergency ward gRPC services.
+   * @throws {Error} If the JWT is missing or invalid.
+   */
+  private createEmergencyWardPanelGrpcClient(
+    url: string,
+  ): EmergencyWardPanelsServiceClient {
+    const channel: Channel = createChannel(url);
+    const authStore = useAuthStore();
+    if (!authStore.isValidToken()) {
+      throw new Error("Error: JWT is invalid.");
+    }
+    return createClientFactory()
+      .use((call, options) => {
+        const token = authStore.getAccessToken();
+        return call.next(call.request, {
+          ...options,
+          metadata: Metadata(options.metadata).set(
+            "Authorization",
+            `Bearer ${token}`,
+          ),
+        });
+      })
+      .create(EmergencyWardPanelsServiceDefinition, channel);
+  }
+
+  /**
    * Retrieves the doctor associated to the JWT.
    * @returns {Promise<Doctor>} Promise resolving to a doctor.
    */
   getDoctor(): Promise<Doctor> {
-    return this.grpcConnection.getDoctor({});
+    return this.employeeConnection.getDoctor({});
   }
 
   /**
@@ -168,7 +198,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<GetAllDoctorsResponse>} Promise resolving to the list of doctors.
    */
   getAllDoctors(): Promise<GetAllDoctorsResponse> {
-    return this.grpcConnection.getAllDoctors({});
+    return this.employeeConnection.getAllDoctors({});
   }
 
   /**
@@ -176,7 +206,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<GetAllPatientsResponse>} Promise resolving to the list of patients.
    */
   getAllPatients(): Promise<GetAllPatientsResponse> {
-    return this.grpcConnection.getAllPatients({});
+    return this.employeeConnection.getAllPatients({});
   }
 
   /**
@@ -184,7 +214,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<GetAllWardResponse>} Promise resolving to the list of wards.
    */
   getAllWards(): Promise<GetAllWardResponse> {
-    return this.grpcConnection.getAllWard({});
+    return this.employeeConnection.getAllWard({});
   }
 
   /**
@@ -192,7 +222,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<GetAllStaffsResponse>} Promise resolving to the list of staff.
    */
   getAllStaff(): Promise<GetAllStaffsResponse> {
-    return this.grpcConnection.getAllStaffs({});
+    return this.employeeConnection.getAllStaffs({});
   }
 
   /**
@@ -201,7 +231,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreateDoctorResponse>} Server response.
    */
   createDoctor(doctor: Doctor): Promise<CreateDoctorResponse> {
-    return this.grpcConnection.createDoctor(doctor);
+    return this.employeeConnection.createDoctor(doctor);
   }
 
   /**
@@ -210,7 +240,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyDoctorResponse>} Server response.
    */
   editDoctor(newDoctorDetails: Doctor): Promise<ModifyDoctorResponse> {
-    return this.grpcConnection.modifyDoctor(newDoctorDetails);
+    return this.employeeConnection.modifyDoctor(newDoctorDetails);
   }
 
   /**
@@ -219,7 +249,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreatePatientResponse>} Server response.
    */
   createPatient(patient: Patient): Promise<CreatePatientResponse> {
-    return this.grpcConnection.createPatient(patient);
+    return this.employeeConnection.createPatient(patient);
   }
 
   /**
@@ -228,7 +258,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyPatientResponse>} Server response.
    */
   editPatient(newPatientDetails: Patient): Promise<ModifyPatientResponse> {
-    return this.grpcConnection.modifyPatient(newPatientDetails);
+    return this.employeeConnection.modifyPatient(newPatientDetails);
   }
 
   /**
@@ -237,7 +267,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreateStaffResponse>} Server response.
    */
   createStaff(staff: Staff): Promise<CreateStaffResponse> {
-    return this.grpcConnection.createStaff(staff);
+    return this.employeeConnection.createStaff(staff);
   }
 
   /**
@@ -246,7 +276,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyStaffResponse>} Server response.
    */
   editStaff(newStaffDetails: Staff): Promise<ModifyStaffResponse> {
-    return this.grpcConnection.modifyStaff(newStaffDetails);
+    return this.employeeConnection.modifyStaff(newStaffDetails);
   }
 
   /**
@@ -254,7 +284,7 @@ export default class EmployeeGRPC {
    * @returns {boolean} True if the user is a staff member, false otherwise.
    */
   isStaff(): boolean {
-    return this.type === EmployeeType.STAFF;
+    return this.type.includes(EmployeeType.STAFF);
   }
 
   /**
@@ -262,7 +292,7 @@ export default class EmployeeGRPC {
    * @returns {boolean} True if the user is a doctor, false otherwise.
    */
   isDoctor(): boolean {
-    return this.type === EmployeeType.DOCTOR;
+    return this.type.includes(EmployeeType.DOCTOR);
   }
 
   /**
@@ -273,7 +303,7 @@ export default class EmployeeGRPC {
   updateMedicalInfo(
     updatedMedicalInfo: MedicalInfo,
   ): Promise<ModifyMedicalInfoResponse> {
-    return this.grpcConnection.modifyMedicalInfo(updatedMedicalInfo);
+    return this.employeeConnection.modifyMedicalInfo(updatedMedicalInfo);
   }
 
   /**
@@ -282,7 +312,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreateMedicalInfoResponse>} Promise containing the status of the request.
    */
   createMedicalInfo(info: MedicalInfo): Promise<CreateMedicalInfoResponse> {
-    return this.grpcConnection.createMedicalInfo(info);
+    return this.employeeConnection.createMedicalInfo(info);
   }
 
   /**
@@ -293,7 +323,7 @@ export default class EmployeeGRPC {
   createAppointment(
     appointment: Appointment,
   ): Promise<CreateAppointmentResponse> {
-    return this.grpcConnection.createAppointment(appointment);
+    return this.employeeConnection.createAppointment(appointment);
   }
 
   /**
@@ -304,7 +334,7 @@ export default class EmployeeGRPC {
   updateAppointment(
     updatedAppointment: Appointment,
   ): Promise<ModifyAppointmentResponse> {
-    return this.grpcConnection.modifyAppointment(updatedAppointment);
+    return this.employeeConnection.modifyAppointment(updatedAppointment);
   }
 
   /**
@@ -313,7 +343,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreateMedicalExamResponse>} Promise containing the status of the request.
    */
   createMedicalExam(exam: MedicalExam): Promise<CreateMedicalExamResponse> {
-    return this.grpcConnection.createMedicalExam(exam);
+    return this.employeeConnection.createMedicalExam(exam);
   }
 
   /**
@@ -324,7 +354,7 @@ export default class EmployeeGRPC {
   updateMedicalExam(
     updatedExam: MedicalExam,
   ): Promise<ModifyMedicalExamResponse> {
-    return this.grpcConnection.modifyMedicalExam(updatedExam);
+    return this.employeeConnection.modifyMedicalExam(updatedExam);
   }
 
   /**
@@ -333,7 +363,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<CreateMedicalEventResponse>} Promise containing the status of the request.
    */
   createMedicalEvent(event: MedicalEvent): Promise<CreateMedicalEventResponse> {
-    return this.grpcConnection.createMedicalEvent(event);
+    return this.employeeConnection.createMedicalEvent(event);
   }
 
   /**
@@ -344,7 +374,7 @@ export default class EmployeeGRPC {
   updateMedicalEvent(
     updatedEvent: MedicalEvent,
   ): Promise<ModifyMedicalEventResponse> {
-    return this.grpcConnection.modifyMedicalEvent(updatedEvent);
+    return this.employeeConnection.modifyMedicalEvent(updatedEvent);
   }
 
   /**
@@ -355,7 +385,7 @@ export default class EmployeeGRPC {
   getAppointmentFromDoctor(
     request: GetAppointmentsFromDoctorRequest,
   ): Promise<GetAppointmentsFromDoctorResponse> {
-    return this.grpcConnection.getAppointmentsFromDoctor(request);
+    return this.employeeConnection.getAppointmentsFromDoctor(request);
   }
 
   /**
@@ -364,7 +394,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyAppointmentResponse>} Promise with the update status.
    */
   modifyAppointment(request: Appointment): Promise<ModifyAppointmentResponse> {
-    return this.grpcConnection.modifyAppointment(request);
+    return this.employeeConnection.modifyAppointment(request);
   }
 
   /**
@@ -375,7 +405,7 @@ export default class EmployeeGRPC {
   modifyMedicalEvent(
     request: MedicalEvent,
   ): Promise<ModifyMedicalEventResponse> {
-    return this.grpcConnection.modifyMedicalEvent(request);
+    return this.employeeConnection.modifyMedicalEvent(request);
   }
 
   /**
@@ -384,7 +414,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyMedicalExamResponse>} Promise with the update status.
    */
   modifyMedicalExam(request: MedicalExam): Promise<ModifyMedicalExamResponse> {
-    return this.grpcConnection.modifyMedicalExam(request);
+    return this.employeeConnection.modifyMedicalExam(request);
   }
 
   /**
@@ -393,7 +423,7 @@ export default class EmployeeGRPC {
    * @returns {Promise<ModifyMedicalInfoResponse>} Promise with the update status.
    */
   modifyMedicalInfo(request: MedicalInfo): Promise<ModifyMedicalInfoResponse> {
-    return this.grpcConnection.modifyMedicalInfo(request);
+    return this.employeeConnection.modifyMedicalInfo(request);
   }
 
   /**
@@ -404,7 +434,7 @@ export default class EmployeeGRPC {
   getAllMedicalEvents(
     request: GetAllMedicalEventRequest,
   ): Promise<GetAllMedicalEventResponse> {
-    return this.grpcConnection.getAllMedicalEvent(request);
+    return this.employeeConnection.getAllMedicalEvent(request);
   }
 
   /**
@@ -415,7 +445,7 @@ export default class EmployeeGRPC {
   getAllMedicalExams(
     request: GetAllMedicalExamRequest,
   ): Promise<GetAllMedicalExamResponse> {
-    return this.grpcConnection.getAllMedicalExam(request);
+    return this.employeeConnection.getAllMedicalExam(request);
   }
 
   /**
