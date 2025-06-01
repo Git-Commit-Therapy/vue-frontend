@@ -5,9 +5,9 @@ import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import type { Appointment } from "~/composable/protobuf/frontend/appointment";
 import type { Patient, Staff } from "~/composable/protobuf/frontend/user";
-import env from "~/utils/env";
 
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 const { t } = useI18n();
 
 const appointment = reactive<Appointment>({

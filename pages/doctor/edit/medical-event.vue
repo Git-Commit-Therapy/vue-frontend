@@ -12,7 +12,8 @@ import {
 
 const router = useRouter();
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 const fromDate = ref<Date | null>(null);
 const toDate = ref<Date | null>(null);
