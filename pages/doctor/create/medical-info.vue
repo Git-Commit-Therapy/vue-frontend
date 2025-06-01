@@ -5,9 +5,8 @@ import { useI18n } from "vue-i18n";
 import { reactive, ref, computed, onBeforeMount } from "vue";
 import type { Patient } from "~/composable/protobuf/frontend/user";
 import type { MedicalInfo } from "~/composable/protobuf/frontend/medical_info";
-import env from "~/utils/env";
-
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 const { t } = useI18n();
 
 const medicalInfo = reactive<MedicalInfo>({
