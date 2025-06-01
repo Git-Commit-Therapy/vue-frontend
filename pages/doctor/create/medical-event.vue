@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
-import env from "~/utils/env";
 import EmployeeGRPC from "@/composable/clients/employeeGrpcClient";
 import {
   SeverityCode,
@@ -12,7 +11,8 @@ import type { Ward } from "@/composable/protobuf/frontend/ward";
 import type { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 const searchPatient = ref("");
 const patients = ref<Patient[]>([]);
@@ -98,6 +98,7 @@ async function submitForm() {
     const res = await employeeGRPC.createMedicalEvent(form);
     if (res.success) resetForm();
   } catch (err) {
+    console.error(err);
     showError.value = true;
     errorMessage.value = t("submitError");
   } finally {
