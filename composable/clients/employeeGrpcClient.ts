@@ -57,21 +57,12 @@ import type {
 } from "../protobuf/frontend/patient_services";
 import type { Empty } from "../protobuf/frontend/google/protobuf/empty";
 
-/** Enum representing the type of employee. */
-enum EmployeeType {
-  DOCTOR,
-  STAFF,
-  UNKNOWN = -1,
-}
-
 /** Class representing employee-related gRPC services using a singleton pattern. */
 export default class EmployeeGRPC {
   private static instance: EmployeeGRPC | null = null;
   private readonly employeeConnection: EmployeeServicesClient;
   private readonly emergencyWardConnection: EmergencyWardServicesClient;
   private readonly emergencyWardPanelConnection: EmergencyWardPanelsServiceClient;
-
-  private type: EmployeeType[] = [];
 
   /**
    * Private constructor to prevent direct construction calls with 'new'.
@@ -82,9 +73,6 @@ export default class EmployeeGRPC {
     this.emergencyWardConnection = this.createEmergencyWardGrpcClient(url);
     this.emergencyWardPanelConnection =
       this.createEmergencyWardPanelGrpcClient(url);
-    const tmpRoles: string[] = getUserRoles(useAuthStore().getAccessToken());
-    if (tmpRoles.includes("/staff")) this.type.push(EmployeeType.STAFF);
-    if (tmpRoles.includes("/doctors")) this.type.push(EmployeeType.DOCTOR);
   }
 
   /**
@@ -278,22 +266,6 @@ export default class EmployeeGRPC {
    */
   editStaff(newStaffDetails: Staff): Promise<ModifyStaffResponse> {
     return this.employeeConnection.modifyStaff(newStaffDetails);
-  }
-
-  /**
-   * Checks if the current user is a staff member.
-   * @returns {boolean} True if the user is a staff member, false otherwise.
-   */
-  isStaff(): boolean {
-    return this.type.includes(EmployeeType.STAFF);
-  }
-
-  /**
-   * Checks if the current user is a doctor.
-   * @returns {boolean} True if the user is a doctor, false otherwise.
-   */
-  isDoctor(): boolean {
-    return this.type.includes(EmployeeType.DOCTOR);
   }
 
   /**
