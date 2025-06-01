@@ -16,6 +16,7 @@ export const useAuthStore = defineStore("auth", () => {
   const authUrl = ref<string>("");
   let authGRPC: AuthGRPC | null = null;
   let refreshInterval: NodeJS.Timeout | null = null;
+  const roles = ref<string[]>([]);
 
   function getAuthUrl() {
     return authUrl.value;
@@ -41,11 +42,13 @@ export const useAuthStore = defineStore("auth", () => {
   function setRefreshToken(token: string): void {
     refreshToken.value = token;
     localStorage.setItem("refreshToken", token);
+    roles.value = getUserRoles(accessToken.value);
   }
 
   function clearTokens(): void {
     accessToken.value = "";
     refreshToken.value = "";
+    roles.value = [];
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     stopTokenRefresh();
@@ -120,6 +123,30 @@ export const useAuthStore = defineStore("auth", () => {
     });
   }
 
+  /**
+   * Checks if the JWT has the doctor role.
+   * @returns {boolean} True if the user has that role, False otherwise.
+   */
+  function isDoctor(): boolean {
+    return roles.value.includes("/doctors");
+  }
+
+  /**
+   * Checks if the JWT has the staff role.
+   * @returns {boolean} True if the user has that role, False otherwise.
+   */
+  function isStaff(): boolean {
+    return roles.value.includes("/staff");
+  }
+
+  /**
+   * Checks if the JWT has the patient role.
+   * @returns {boolean} True if the user has that role, False otherwise.
+   */
+  function isPatient(): boolean {
+    return roles.value.includes("/patient");
+  }
+
   return {
     getAuthUrl,
     setAuthUrl,
@@ -131,5 +158,8 @@ export const useAuthStore = defineStore("auth", () => {
     isValidToken,
     startTokenRefresh,
     stopTokenRefresh,
+    isPatient,
+    isDoctor,
+    isStaff,
   };
 });
