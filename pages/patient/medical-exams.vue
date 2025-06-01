@@ -19,7 +19,9 @@ const examDetails = ref<MedicalExam | null>(null);
 const error = ref("");
 const showError = ref(false);
 
-const patientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
+const config = useRuntimeConfig();
+const patientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
+// const patientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 
 // Load exams
 async function loadMedicalExams(): Promise<void> {

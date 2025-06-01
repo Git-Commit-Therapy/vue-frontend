@@ -3,7 +3,11 @@ import { ref, computed, onMounted } from "vue";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import { useI18n } from "vue-i18n";
 import type { Staff } from "~/composable/protobuf/frontend/user";
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
+// const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+
 const { t } = useI18n();
 
 const staffList = ref<Staff[]>([]);

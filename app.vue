@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import NavBar from "@/components/navbar/Navbar.vue";
 import { useAuthStore } from "@/stores/authStore";
-import env from "@/utils/env";
+// import env from "@/utils/env";
 import AuthGRPC from "@/composable/clients/authGrpcClient";
 const authStore = useAuthStore();
 onBeforeMount(async () => {
-  authStore.setAuthUrl(env.AUTH_URL);
+  const config = useRuntimeConfig();
+  authStore.setAuthUrl(config.public.authUrl);
   AuthGRPC.getInstance(authStore.getAuthUrl());
+  // AuthGRPC.getInstance(env.AUTH_URL);
   authStore.startTokenRefresh();
 });
 </script>

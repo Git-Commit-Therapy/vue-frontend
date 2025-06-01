@@ -4,7 +4,9 @@ import { useI18n } from "vue-i18n";
 import type { Patient } from "~/composable/protobuf/frontend/user";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
+// const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 const { t } = useI18n();
 
 const patientList = ref<Patient[]>([]);

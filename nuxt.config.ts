@@ -22,9 +22,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      AUTH_URL: process.env.AUTH_URL,
-      PATIENTS_URL: process.env.PATIENTS_URL,
-      EMPLOYEES_URL: process.env.EMPLOYEES_URL,
+      authUrl: "http://auth.sancommitto.local",
+      patientsUrl: "http://patients.sancommitto.local",
+      employeesUrl: "http://employees.sancommitto.local",
     },
   },
   vite: {
