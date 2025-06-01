@@ -1,5 +1,4 @@
 {
-  "$schema": "./i18n.schema.json",
   "firstName": "Nome",
   "lastName": "Cognome",
   "hospitalName": "Ospedale di San Committo",
@@ -64,5 +63,9 @@
   "editPatient": "Modifica paziente",
   "administraton": "Amministrazione",
   "patient": "Paziente",
-  "eventList": "I tuoi eventi"
+  "staff": "Staff",
+  "eventList": "I tuoi eventi",
+  "dateTime": "Data",
+  "fetchError": "Errore durante il caricamento dei dati, riprova.",
+  "submitError": "Errore durante l'invio, sistema i problemi e riprova."
 }

@@ -51,7 +51,7 @@ async function fetchAllPatients() {
     patients.value = (await employeeGRPC.getAllPatients()).patients;
   } catch {
     showError.value = true;
-    errorMessage.value = t("appointment.fetchError");
+    errorMessage.value = t("fetchError");
   }
 }
 
@@ -60,7 +60,7 @@ async function fetchAllStaff() {
     staffList.value = (await employeeGRPC.getAllStaff()).staffs;
   } catch {
     showError.value = true;
-    errorMessage.value = t("appointment.fetchError");
+    errorMessage.value = t("fetchError");
   }
 }
 
@@ -128,7 +128,7 @@ function setError(value: boolean) {
             <v-col cols="12">
               <v-text-field
                 v-model="appointment.dateTime"
-                :label="t('appointment.dateTime')"
+                :label="t('dateTime')"
                 :error="Boolean(errors.dateTime)"
                 :error-messages="touched.dateTime ? errors.dateTime : ''"
                 type="datetime-local"
@@ -142,7 +142,7 @@ function setError(value: boolean) {
                 v-model="appointment.patient"
                 :items="patients"
                 :search-input.sync="searchPatient"
-                :label="t('appointment.patient')"
+                :label="t('patient')"
                 :item-title="showPatientFullName"
                 item-value="id"
                 return-object
@@ -160,7 +160,7 @@ function setError(value: boolean) {
                 v-model="appointment.staff"
                 :items="staffList"
                 :search-input.sync="searchStaff"
-                :label="t('appointment.staff')"
+                :label="t('staff')"
                 :item-title="showPatientFullName"
                 item-value="id"
                 return-object
@@ -179,7 +179,7 @@ function setError(value: boolean) {
                 :loading="isSubmitting"
                 block
               >
-                {{ t("appointment.submit") }}
+                {{ t("submit") }}
               </v-btn>
             </v-col>
           </v-row>

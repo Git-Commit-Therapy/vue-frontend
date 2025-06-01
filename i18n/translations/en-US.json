@@ -1,5 +1,4 @@
 {
-  "$schema": "./i18n.schema.json",
   "firstName": "First Name",
   "lastName": "Last Name",
   "hospitalName": "San Committo Hospital",
@@ -65,5 +64,9 @@
   "editPatient": "Edit patient informations",
   "administration": "Administration",
   "patient": "Patient",
-  "eventList": "Your medical events"
+  "staff": "Staff",
+  "eventList": "Your medical events",
+  "dateTime": "When",
+  "fetchError": "Error during data fetching, try again.",
+  "submitError": "Error during submit, fix the fields and try again."
 }
