@@ -98,5 +98,7 @@
   "search": "Ricerca",
   "editing": "Modificando",
   "searchAppointments": "Ricerca appuntamenti",
-  "submitSuccess": "Successo"
+  "submitSuccess": "Successo",
+  "modifyMedicalInfoTitle": "Modifica informazioni mediche",
+  "existingMedicalInfo": "Informazione esistente"
 }

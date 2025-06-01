@@ -99,5 +99,7 @@
   "search": "Search",
   "editing": "Editing",
   "searchAppointments": "Search appointments",
-  "submitSuccess": "Success"
+  "submitSuccess": "Success",
+  "modifyMedicalInfoTitle": "Modify medical informations",
+  "existingMedicalInfo": "Existing information"
 }
