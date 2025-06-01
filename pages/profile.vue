@@ -3,7 +3,11 @@ import { Patient } from "@/composable/protobuf/frontend/user";
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
 import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const { t } = useI18n();
-const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
+
+const config = useRuntimeConfig();
+const patientGRPC: PatientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
+// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
+
 const patient = ref<Patient>();
 const medicalInfo = ref<MedicalInfo[]>([]);
 const nameSurname = ref<string>("");

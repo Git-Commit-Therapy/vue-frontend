@@ -12,7 +12,9 @@ import PatientGRPC from "~/composable/clients/patientGrpcClient";
 import { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 const { t } = useI18n();
 const router = useRouter();
-const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
+const config = useRuntimeConfig();
+const patientGRPC: PatientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
+// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
 
 // Variables for the date range
 const from = ref(new Date());
