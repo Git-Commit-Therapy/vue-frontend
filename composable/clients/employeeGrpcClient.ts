@@ -40,6 +40,7 @@ import {
   CallPatientRequest,
   type EmergencyWardPanelsServiceClient,
   EmergencyWardPanelsServiceDefinition,
+  QueueStatusResponse,
 } from "~/composable/protobuf/frontend/emergency_ward_services";
 import type {
   Doctor,
@@ -482,5 +483,13 @@ export default class EmployeeGRPC {
    */
   callEmergencyPatientForVisit(request: CallPatientRequest): Promise<Empty> {
     return this.emergencyWardConnection.callPatientForVisit(request);
+  }
+
+  /**
+   * Returns the list of all the patients in a emergency visit.
+   * @returns {Promise<QueueStatusResponse>} Promise indicating the queue status.
+   */
+  getEmergencyPatients(): Promise<QueueStatusResponse> {
+    return this.emergencyWardPanelConnection.retrieveInVisitingStatus({});
   }
 }
