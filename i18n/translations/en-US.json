@@ -82,5 +82,10 @@
   "editAppointment": "Edit appointment",
   "createMedicalEventTitle": "Create a new medical event",
   "createMedicalEvent": "Create event",
-  "editMedicalEvent": "Edit event"
+  "editMedicalEvent": "Edit event",
+  "medicalReport": "Report",
+  "medicalEvent": "Medical event",
+  "createMedicalExam": "Create exam",
+  "createMedicalExamTitle": "Create a new medical exam",
+  "editMedicalExam": "Edit exam"
 }
