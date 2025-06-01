@@ -113,7 +113,9 @@ async function handleSubmit() {
   if (response.loginStatus === AuthStatus.SUCCESS) {
     authStore.setAccessToken(response.accessToken);
     authStore.setRefreshToken(response.refreshToken);
-    return navigateTo("/profile");
+    if (authStore.isPatient()) return navigateTo("/patient/profile");
+    if (authStore.isDoctor()) return navigateTo("/doctor/create/appointment");
+    if (authStore.isPatient()) return navigateTo("/administration/patient");
   } else {
     error.value = t("loginFailed");
     showError.value = true;
