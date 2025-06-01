@@ -64,6 +64,7 @@ const saveEdit = async () => {
   if (!editingAppointment.value) return;
 
   editLoading.value = true;
+  // FIXME: date.gettime is not a function
   try {
     editingAppointment.value.dateTime = new Date(
       String(editingAppointment.value.dateTime!),
