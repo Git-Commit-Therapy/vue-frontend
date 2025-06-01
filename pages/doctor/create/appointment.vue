@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { showFullName } from "~/utils/showFullName";
+import { showFullName } from "~/utils/show-full-name";
 import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
