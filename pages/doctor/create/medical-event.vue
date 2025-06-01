@@ -73,7 +73,6 @@ onBeforeMount(async () => {
   } catch (err) {
     showError.value = true;
     errorMessage.value = t("fetchError");
-    console.error(err);
   }
 });
 
@@ -101,7 +100,6 @@ async function submitForm() {
   } catch (err) {
     showError.value = true;
     errorMessage.value = t("submitError");
-    console.error(err);
   } finally {
     isSubmitting.value = false;
   }
@@ -140,7 +138,7 @@ function setError(state: boolean) {
     </v-card-title>
 
     <v-card-text>
-      <form @submit.prevent="submitForm">
+      <v-form @submit.prevent="submitForm">
         <v-container>
           <v-row>
             <v-col cols="11">
@@ -293,7 +291,7 @@ function setError(state: boolean) {
             </v-col>
           </v-row>
         </v-container>
-      </form>
+      </v-form>
     </v-card-text>
   </v-card>
 </template>
