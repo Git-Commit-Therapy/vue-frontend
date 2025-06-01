@@ -16,15 +16,17 @@ onBeforeMount(async () => {
 <template>
   <v-app>
     <NavBar />
-    <v-container fluid class="fill-height">
-      <v-row justify="center" align="center">
-        <v-col cols="auto"></v-col>
-        <v-col>
-          <NuxtPage />
-        </v-col>
-        <v-col cols="auto"></v-col>
-      </v-row>
-    </v-container>
+    <v-main>
+      <v-container fluid class="fill-height">
+        <v-row justify="center" align="center">
+          <v-col cols="auto"></v-col>
+          <v-col>
+            <NuxtPage />
+          </v-col>
+          <v-col cols="auto"></v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
