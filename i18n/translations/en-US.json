@@ -91,5 +91,12 @@
   "description": "Description",
   "createMedicalInfo": "Create info",
   "editMedicalInfo": "Edit info",
-  "createMedicalInfoTitle": "Create a new medical info"
+  "createMedicalInfoTitle": "Create a new medical info",
+  "updateSuccess": "Update successful",
+  "updateError": "Error during the update, try again",
+  "invalidDateRange": "Invalid dates",
+  "pastAppointment": "Past appointment",
+  "search": "Search",
+  "editing": "Editing",
+  "searchAppointments": "Search appointments"
 }

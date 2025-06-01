@@ -90,5 +90,12 @@
   "description": "Descrizione",
   "createMedicalInfo": "Crea informazione",
   "editMedicalInfo": "Modifica informazione",
-  "createMedicalInfoTitle": "Crea una nuova informazione medica"
+  "createMedicalInfoTitle": "Crea una nuova informazione medica",
+  "updateSuccess": "Aggiornamento completato",
+  "updateError": "Errore durante l'aggiornamento, riprova",
+  "invalidDateRange": "Date invalide",
+  "pastAppointment": "Appuntamento completato",
+  "search": "Ricerca",
+  "editing": "Modificando",
+  "searchAppointments": "Ricerca appuntamenti"
 }

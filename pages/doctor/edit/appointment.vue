@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { formatDateTime } from "~/utils/date-format";
+import { ref, onBeforeMount, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   GetAppointmentsFromDoctorRequest,
@@ -8,13 +9,14 @@ import {
 import type { Appointment } from "~/composable/protobuf/frontend/appointment";
 import { Doctor } from "~/composable/protobuf/frontend/user";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
-import env from "~/utils/env";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
 
-const fromDate = ref<Date | null>(null);
-const toDate = ref<Date | null>(null);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
+
+const fromDate = ref<Date | null>(new Date());
+const toDate = ref<Date | null>(new Date());
 const loading = ref<boolean>(false);
 const appointments = ref<Appointment[]>([]);
 const currentDoctor = ref<Doctor>();
@@ -39,14 +41,12 @@ const canSearch = computed(() => {
 
 const isEditing = computed(() => editingAppointmentId.value !== null);
 
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
     currentDoctor.value = await employeeGRPC.getDoctor();
   } catch (err) {
-    console.error("Failed to fetch current doctor", err);
     showError.value = true;
-    errorMessage.value =
-      t("doctor.fetchError") || "Failed to load doctor information";
+    errorMessage.value = t("fetchError");
   }
 });
 
@@ -64,9 +64,10 @@ const saveEdit = async () => {
   if (!editingAppointment.value) return;
 
   editLoading.value = true;
-
   try {
-    // Send the entire appointment object (keeping the ID intact)
+    editingAppointment.value.dateTime = new Date(
+      String(editingAppointment.value.dateTime!),
+    );
     await employeeGRPC.updateAppointment(editingAppointment.value);
 
     // Update the local appointment data
@@ -83,13 +84,11 @@ const saveEdit = async () => {
 
     // Show success message
     showError.value = true;
-    errorMessage.value =
-      t("appointment.updateSuccess") || "Appointment updated successfully";
+    errorMessage.value = t("updateSuccess");
   } catch (err) {
     console.error("Failed to update appointment", err);
     showError.value = true;
-    errorMessage.value =
-      t("appointment.updateError") || "Failed to update appointment";
+    errorMessage.value = t("updateError");
   } finally {
     editLoading.value = false;
   }
@@ -99,8 +98,7 @@ const fetchAppointments = async () => {
   if (!canSearch.value) {
     if (!isDateRangeValid.value) {
       showError.value = true;
-      errorMessage.value =
-        t("dateRange.invalid") || "Please select a valid date range";
+      errorMessage.value = t("invalidDateRange");
       return;
     }
     return;
@@ -117,12 +115,12 @@ const fetchAppointments = async () => {
   try {
     const response: GetAppointmentsFromDoctorResponse =
       await employeeGRPC.getAppointmentFromDoctor(req);
-    appointments.value = response.appointments || [];
+    appointments.value = response.appointments.toSorted((a, b) =>
+      Number(a.dateTime! < b.dateTime!),
+    );
   } catch (err) {
-    console.error("Failed to fetch appointments", err);
     showError.value = true;
-    errorMessage.value =
-      t("appointments.fetchError") || "Failed to fetch appointments";
+    errorMessage.value = t("fetchError");
   } finally {
     loading.value = false;
   }
@@ -134,15 +132,6 @@ const canEdit = (dateTime: string | Date | undefined) => {
     return new Date(dateTime) > now;
   } catch {
     return false;
-  }
-};
-
-const formatDateTime = (dateTime: string | Date | undefined) => {
-  if (!dateTime) return "";
-  try {
-    return new Date(dateTime).toLocaleString();
-  } catch {
-    return String(dateTime);
   }
 };
 
@@ -173,8 +162,8 @@ const setError = (value: boolean) => {
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="fromDate"
-                :label="t('fromDate') || 'From date'"
-                type="date"
+                :label="t('fromDateTime')"
+                type="datetime-local"
                 variant="outlined"
                 :error="!isDateRangeValid"
                 :disabled="isEditing"
@@ -183,8 +172,8 @@ const setError = (value: boolean) => {
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="toDate"
-                :label="t('toDate') || 'To date'"
-                type="date"
+                :label="t('toDateTime')"
+                type="datetime-local"
                 variant="outlined"
                 :error="!isDateRangeValid"
                 :disabled="isEditing"
@@ -198,7 +187,7 @@ const setError = (value: boolean) => {
             variant="tonal"
             class="mb-4"
           >
-            {{ t("dateRange.invalid") || "From date must be before to date" }}
+            {{ t("invalidDateRange") }}
           </v-alert>
 
           <v-btn
@@ -224,7 +213,7 @@ const setError = (value: boolean) => {
         <template v-if="editingAppointmentId !== appt.appointmentId">
           <v-card-title>
             {{ appt.patient?.user?.name }} {{ appt.patient?.user?.surname }} —
-            {{ formatDateTime(appt.dateTime) }}
+            {{ formatDateTime(appt.dateTime!) }}
           </v-card-title>
           <v-card-actions>
             <v-btn
@@ -248,7 +237,7 @@ const setError = (value: boolean) => {
         <template v-else>
           <v-card-title class="bg-warning-lighten-5">
             <v-icon start>mdi-pencil</v-icon>
-            Editing: {{ appt.patient?.user?.name }}
+            {{ t("editing") }} {{ appt.patient?.user?.name }}
             {{ appt.patient?.user?.surname }}
           </v-card-title>
           <v-card-text>
@@ -257,10 +246,10 @@ const setError = (value: boolean) => {
                 <v-col cols="12" md="6">
                   <v-text-field
                     v-model="editingAppointment!.dateTime"
-                    label="Date & Time"
+                    :label="t('fromDateTime')"
                     type="datetime-local"
                     variant="outlined"
-                    :rules="[(v) => !!v || 'Date and time is required']"
+                    :rules="[(v) => !!v || t('required')]"
                     required
                   />
                 </v-col>
@@ -275,7 +264,7 @@ const setError = (value: boolean) => {
               :loading="editLoading"
             >
               <v-icon start>mdi-check</v-icon>
-              {{ t("save") || "Save" }}
+              {{ t("save") }}
             </v-btn>
             <v-btn
               color="grey"
@@ -284,7 +273,7 @@ const setError = (value: boolean) => {
               :disabled="editLoading"
             >
               <v-icon start>mdi-close</v-icon>
-              {{ t("cancel") || "Cancel" }}
+              {{ t("cancel") }}
             </v-btn>
           </v-card-actions>
         </template>
@@ -292,11 +281,11 @@ const setError = (value: boolean) => {
     </div>
 
     <v-alert
-      v-else-if="appointments.length === 0 && !loading"
+      v-if="appointments.length === 0 && !loading"
       type="info"
       variant="tonal"
     >
-      {{ t("noAppointments") || "No appointments found" }}
+      {{ t("noAppointments") }}
     </v-alert>
   </div>
 </template>
