@@ -69,7 +69,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   /**
-   * Starts the token refresh mechanism, refreshing every 15 seconds.
+   * Starts the token refresh mechanism, refreshing every 30 seconds.
    */
   function startTokenRefresh(): void {
     if (authGRPC === null) {
