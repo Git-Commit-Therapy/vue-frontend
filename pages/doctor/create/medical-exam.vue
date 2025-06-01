@@ -60,7 +60,10 @@ const submit = async () => {
 
   try {
     const response = await employeeGRPC.createMedicalExam(payload);
-    resetForm();
+    if (response.success) {
+      resetForm();
+      showSuccess.value = true;
+    }
   } catch (error) {
     showError.value = true;
     errorMessage.value = t("submitError");
@@ -122,6 +125,8 @@ const errorMessage = ref("");
 function setError(value: boolean) {
   showError.value = value;
 }
+
+const showSuccess = ref(false);
 </script>
 
 <template>
@@ -135,6 +140,17 @@ function setError(value: boolean) {
       {{ errorMessage }}
       <template #actions>
         <v-btn variant="text" icon="mdi-close" @click="setError(false)" />
+      </template>
+    </v-snackbar>
+    <v-snackbar
+      v-model="showSuccess"
+      timeout="5000"
+      color="success"
+      location="top right"
+    >
+      {{ t("submitSuccess") }}
+      <template #actions>
+        <v-btn variant="text" icon="mdi-close" @click="showSuccess = false" />
       </template>
     </v-snackbar>
     <v-card class="mx-auto" max-width="600">

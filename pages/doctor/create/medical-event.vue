@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { showPatientFullName } from "~/utils/show-patient-full-name";
 import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "@/composable/clients/employeeGrpcClient";
@@ -7,7 +8,6 @@ import {
   type MedicalEvent,
 } from "@/composable/protobuf/frontend/medical_event";
 import type { Doctor, Patient } from "@/composable/protobuf/frontend/user";
-import type { Ward } from "@/composable/protobuf/frontend/ward";
 import type { MedicalExam } from "~/composable/protobuf/frontend/medical_exam";
 
 const { t } = useI18n();
@@ -96,7 +96,10 @@ async function submitForm() {
   try {
     isSubmitting.value = true;
     const res = await employeeGRPC.createMedicalEvent(form);
-    if (res.success) resetForm();
+    if (res.success) {
+      showSuccess.value = true;
+      resetForm();
+    }
   } catch (err) {
     console.error(err);
     showError.value = true;
@@ -119,8 +122,20 @@ function resetForm() {
 function setError(state: boolean) {
   showError.value = state;
 }
+const showSuccess = ref(false);
 </script>
 <template>
+  <v-snackbar
+    v-model="showSuccess"
+    timeout="5000"
+    color="success"
+    location="top right"
+  >
+    {{ t("submitSuccess") }}
+    <template #actions>
+      <v-btn variant="text" icon="mdi-close" @click="showSuccess = false" />
+    </template>
+  </v-snackbar>
   <v-snackbar
     v-model="showError"
     timeout="5000"

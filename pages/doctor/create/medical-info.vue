@@ -84,6 +84,8 @@ async function submitForm() {
     isSubmitting.value = true;
     await submitMedicalInfo(medicalInfo);
     resetForm();
+
+    showSuccess.value = true;
   } catch (error) {
     showError.value = true;
     errorMessage.value = t("submitError");
@@ -111,10 +113,22 @@ async function submitMedicalInfo(info: MedicalInfo) {
 function setError(error: boolean) {
   showError.value = error;
 }
+const showSuccess = ref(false);
 </script>
 
 <template>
   <div>
+    <v-snackbar
+      v-model="showSuccess"
+      timeout="5000"
+      color="success"
+      location="top right"
+    >
+      {{ t("submitSuccess") }}
+      <template #actions>
+        <v-btn variant="text" icon="mdi-close" @click="showSuccess = false" />
+      </template>
+    </v-snackbar>
     <v-snackbar
       v-model="showError"
       :timeout="5000"

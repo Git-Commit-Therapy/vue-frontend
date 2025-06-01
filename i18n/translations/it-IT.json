@@ -97,5 +97,6 @@
   "pastAppointment": "Appuntamento completato",
   "search": "Ricerca",
   "editing": "Modificando",
-  "searchAppointments": "Ricerca appuntamenti"
+  "searchAppointments": "Ricerca appuntamenti",
+  "submitSuccess": "Successo"
 }

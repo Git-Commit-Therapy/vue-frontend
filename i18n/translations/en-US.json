@@ -98,5 +98,6 @@
   "pastAppointment": "Past appointment",
   "search": "Search",
   "editing": "Editing",
-  "searchAppointments": "Search appointments"
+  "searchAppointments": "Search appointments",
+  "submitSuccess": "Success"
 }

@@ -23,7 +23,12 @@ const searchStaff = ref("");
 const isSubmitting = ref(false);
 const showError = ref(false);
 const errorMessage = ref("");
+const showSuccess = ref(false);
+const successMessage = ref("");
 
+function setSuccess(value: boolean) {
+  showSuccess.value = value;
+}
 const patients = ref<Patient[]>([]);
 const staffList = ref<Staff[]>([]);
 
@@ -80,7 +85,11 @@ async function submitForm() {
     appointment.dateTime = new Date(appointment.dateTime!);
     isSubmitting.value = true;
     const res = await employeeGRPC.createAppointment(appointment);
-    if (res.success) resetForm();
+    if (res.success) {
+      resetForm();
+      successMessage.value = t("submitSuccess");
+      showSuccess.value = true;
+    }
   } catch (e) {
     console.error(e);
     showError.value = true;
@@ -114,6 +123,17 @@ function setError(value: boolean) {
     {{ errorMessage }}
     <template #actions>
       <v-btn variant="text" icon="mdi-close" @click="setError(false)" />
+    </template>
+  </v-snackbar>
+  <v-snackbar
+    v-model="showSuccess"
+    timeout="5000"
+    color="success"
+    location="top right"
+  >
+    {{ t("submitSuccess") }}
+    <template #actions>
+      <v-btn variant="text" icon="mdi-close" @click="setSuccess(false)" />
     </template>
   </v-snackbar>
 
