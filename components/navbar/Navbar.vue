@@ -72,7 +72,7 @@ function toggleDrawer() {
 
 <template>
   <div>
-    <v-app-bar>
+    <v-app-bar app>
       <v-btn icon @click="toggleDrawer" v-if="authStore.isValidToken()">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
@@ -123,7 +123,7 @@ function toggleDrawer() {
       </div>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="isDrawerOpen" temporary>
+    <v-navigation-drawer v-model="isDrawerOpen" temporary app>
       <v-list max-width="250">
         <template v-if="hasRole('/patient')">
           <v-divider class="my-2"></v-divider>
