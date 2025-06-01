@@ -86,5 +86,9 @@
   "medicalEvent": "Evento medico",
   "createMedicalExam": "Crea esame",
   "createMedicalExamTitle": "Crea un nuovo esame medico",
-  "editMedicalExam": "Modifca esame"
+  "editMedicalExam": "Modifca esame",
+  "description": "Descrizione",
+  "createMedicalInfo": "Crea informazione",
+  "editMedicalInfo": "Modifica informazione",
+  "createMedicalInfoTitle": "Crea una nuova informazione medica"
 }

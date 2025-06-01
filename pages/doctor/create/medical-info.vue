@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { showPatientFullName } from "~/utils/show-patient-full-name";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
 import { useI18n } from "vue-i18n";
 import { reactive, ref, computed, onBeforeMount } from "vue";
@@ -57,7 +58,7 @@ onBeforeMount(async () => {
     patients.value = await fetchPatients();
   } catch (error) {
     showError.value = true;
-    errorMessage.value = t("medicalInfo.loadError");
+    errorMessage.value = t("fetchError");
   } finally {
     isLoadingPatients.value = false;
   }
@@ -86,7 +87,7 @@ async function submitForm() {
     resetForm();
   } catch (error) {
     showError.value = true;
-    errorMessage.value = t("medicalInfo.submitError");
+    errorMessage.value = t("submitError");
   } finally {
     isSubmitting.value = false;
   }
@@ -129,7 +130,7 @@ function setError(error: boolean) {
 
     <v-card class="mx-auto my-4" max-width="800" rounded="lg">
       <v-card-title class="text-h5">
-        {{ t("medicalInfo.title") }}
+        {{ t("createMedicalInfoTitle") }}
       </v-card-title>
 
       <v-card-text>
@@ -141,36 +142,24 @@ function setError(error: boolean) {
                   v-model="medicalInfo.patient"
                   :items="filteredPatients"
                   :search-input.sync="searchQuery"
-                  :label="t('medicalInfo.patient')"
+                  :label="t('patient')"
                   :loading="isLoadingPatients"
                   :error="Boolean(errors.patient)"
                   :error-messages="touched.patient ? errors.patient : ''"
-                  item-title="user.name"
+                  :item-title="showPatientFullName"
                   item-value="id"
                   return-object
                   clearable
                   variant="outlined"
                   @blur="touched.patient = true"
                 >
-                  <template #item="{ props, item }">
-                    <v-list-item v-bind="props">
-                      <template #title>
-                        {{ item.raw.user?.name || "Unknown" }}
-                      </template>
-                      <template #subtitle>
-                        {{ item.raw.user?.email || "No email" }} ({{
-                          item.raw.user?.id ?? "?"
-                        }})
-                      </template>
-                    </v-list-item>
-                  </template>
                 </v-autocomplete>
               </v-col>
 
               <v-col cols="12">
                 <v-textarea
                   v-model="medicalInfo.description"
-                  :label="t('medicalInfo.description')"
+                  :label="t('description')"
                   :error="Boolean(errors.description)"
                   :error-messages="
                     touched.description ? errors.description : ''
@@ -190,7 +179,7 @@ function setError(error: boolean) {
                   block
                   size="large"
                 >
-                  {{ t("medicalInfo.submit") }}
+                  {{ t("submit") }}
                 </v-btn>
               </v-col>
             </v-row>

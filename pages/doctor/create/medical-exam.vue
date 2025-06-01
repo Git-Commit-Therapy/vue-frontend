@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { showPatientFullName } from "~/utils/show-patient-full-name";
 import { watch, ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "@/composable/clients/employeeGrpcClient";
