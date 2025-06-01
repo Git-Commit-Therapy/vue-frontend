@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { showFullName } from "~/utils/show-full-name";
+import { showPatientFullName } from "~/utils/show-patient-full-name";
 import { ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
@@ -12,7 +12,7 @@ const { t } = useI18n();
 
 const appointment = reactive<Appointment>({
   appointmentId: 0,
-  dateTime: undefined,
+  dateTime: new Date(),
   staff: undefined,
   doctor: undefined,
   patient: undefined,
@@ -41,9 +41,9 @@ const isFormValid = computed(() => {
   );
 });
 
-onBeforeMount(() => {
-  fetchAllPatients();
-  fetchAllStaff();
+onBeforeMount(async () => {
+  await fetchAllPatients();
+  await fetchAllStaff();
 });
 
 async function fetchAllPatients() {
@@ -84,14 +84,14 @@ async function submitForm() {
   } catch (e) {
     console.error(e);
     showError.value = true;
-    errorMessage.value = t("appointment.submitError");
+    errorMessage.value = t("submitError");
   } finally {
     isSubmitting.value = false;
   }
 }
 
 function resetForm() {
-  appointment.dateTime = undefined;
+  appointment.dateTime = new Date();
   appointment.staff = undefined;
   appointment.patient = undefined;
   searchPatient.value = "";
@@ -143,7 +143,7 @@ function setError(value: boolean) {
                 :items="patients"
                 :search-input.sync="searchPatient"
                 :label="t('appointment.patient')"
-                :item-title="showFullName"
+                :item-title="showPatientFullName"
                 item-value="id"
                 return-object
                 clearable
@@ -154,13 +154,14 @@ function setError(value: boolean) {
               />
             </v-col>
 
+            <!-- I get that "showPatientFullName" is not ideal but it works -->
             <v-col cols="12">
               <v-autocomplete
                 v-model="appointment.staff"
                 :items="staffList"
                 :search-input.sync="searchStaff"
                 :label="t('appointment.staff')"
-                :item-title="showFullName"
+                :item-title="showPatientFullName"
                 item-value="id"
                 return-object
                 clearable
