@@ -8,7 +8,8 @@ import type { Doctor, Patient } from "@/composable/protobuf/frontend/user";
 import type { MedicalEvent } from "@/composable/protobuf/frontend/medical_event";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 const currentDoctor = ref<Doctor | undefined>(undefined);
 const patients = ref<Patient[]>([]);
