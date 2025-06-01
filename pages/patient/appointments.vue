@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: "patient",
+});
 import PatientGRPC from "@/composable/clients/patientGrpcClient";
 import type { GetAppointmentsResponse } from "@/composable/protobuf/frontend/employee_services";
 import { formatDateTime } from "@/utils/date-format";

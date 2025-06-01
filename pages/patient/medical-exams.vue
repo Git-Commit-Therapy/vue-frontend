@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: "patient",
+});
+
 import { ref, onBeforeMount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
