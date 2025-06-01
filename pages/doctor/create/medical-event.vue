@@ -23,7 +23,7 @@ const showError = ref(false);
 const errorMessage = ref("");
 
 const form = reactive<MedicalEvent>({
-  eventId: -1,
+  eventId: 0,
   fromDateTime: undefined,
   toDateTime: undefined,
   severityCode: SeverityCode.UNRECOGNIZED,
@@ -40,24 +40,24 @@ const touched = reactive({
 });
 
 const errors = computed(() => ({
-  patient: touched.patient && !form.patient ? t("validation.required") : "",
+  patient: touched.patient && !form.patient ? t("required") : "",
   severityCode:
     touched.severityCode && form.severityCode === SeverityCode.UNRECOGNIZED
-      ? t("validation.required")
+      ? t("required")
       : "",
   dischargeLetter:
     touched.dischargeLetter && !form.dischargeLetter.trim()
-      ? t("validation.required")
+      ? t("required")
       : "",
 }));
 
-const severityOptions = [
-  { label: t("severity.white"), value: SeverityCode.WHITE },
-  { label: t("severity.green"), value: SeverityCode.GREEN },
-  { label: t("severity.yellow"), value: SeverityCode.YELLOW },
-  { label: t("severity.orange"), value: SeverityCode.ORANGE },
-  { label: t("severity.red"), value: SeverityCode.RED },
-];
+const severityOptions = computed(() => [
+  { label: t("white"), value: SeverityCode.WHITE },
+  { label: t("green"), value: SeverityCode.GREEN },
+  { label: t("yellow"), value: SeverityCode.YELLOW },
+  { label: t("orange"), value: SeverityCode.ORANGE },
+  { label: t("red"), value: SeverityCode.RED },
+]);
 
 onBeforeMount(async () => {
   try {
@@ -72,7 +72,7 @@ onBeforeMount(async () => {
     ).medicalExams;
   } catch (err) {
     showError.value = true;
-    errorMessage.value = t("error.fetch");
+    errorMessage.value = t("fetchError");
     console.error(err);
   }
 });
@@ -96,16 +96,27 @@ async function submitForm() {
 
   try {
     isSubmitting.value = true;
-    const response = await employeeGRPC.createMedicalEvent(form);
-    console.log("Created:", response);
+    const res = await employeeGRPC.createMedicalEvent(form);
+    if (res.success) resetForm();
   } catch (err) {
     showError.value = true;
-    errorMessage.value = t("createMedicalEvent.submitError");
+    errorMessage.value = t("submitError");
     console.error(err);
   } finally {
     isSubmitting.value = false;
   }
 }
+
+function resetForm() {
+  form.dischargeLetter = "";
+  form.toDateTime = form.fromDateTime = new Date();
+  form.ward = form.patient = undefined;
+  form.severityCode = SeverityCode.UNRECOGNIZED;
+  isSubmitting.value = false;
+  searchPatient.value = "";
+  touched.patient = touched.severityCode = touched.dischargeLetter = false;
+}
+
 function setError(state: boolean) {
   showError.value = state;
 }
@@ -123,26 +134,26 @@ function setError(state: boolean) {
     </template>
   </v-snackbar>
 
-  <v-card class="mx-auto my-4" max-width="800">
+  <v-card class="mx-auto my-4" max-width="600">
     <v-card-title class="text-h5">
-      {{ t("createMedicalEvent.title") }}
+      {{ t("createMedicalEventTitle") }}
     </v-card-title>
 
     <v-card-text>
       <form @submit.prevent="submitForm">
         <v-container>
           <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="11">
               <v-text-field
                 v-model="form.fromDateTime"
-                :label="t('createMedicalEvent.fromDateTime')"
+                :label="t('fromDateTime')"
                 type="datetime-local"
                 variant="outlined"
                 :disabled="disabledFields.fromDateTime"
               />
             </v-col>
 
-            <v-col cols="12" md="6" class="d-flex align-center">
+            <v-col cols="1" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
@@ -162,17 +173,17 @@ function setError(state: boolean) {
               </v-btn>
             </v-col>
 
-            <v-col cols="12" md="6">
+            <v-col cols="11">
               <v-text-field
                 v-model="form.toDateTime"
-                :label="t('createMedicalEvent.toDateTime')"
+                :label="t('toDateTime')"
                 type="datetime-local"
                 variant="outlined"
                 :disabled="disabledFields.toDateTime"
               />
             </v-col>
 
-            <v-col cols="12" md="6" class="d-flex align-center">
+            <v-col cols="1" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
@@ -193,7 +204,7 @@ function setError(state: boolean) {
             <v-col cols="12">
               <v-select
                 v-model="form.severityCode"
-                :label="t('createMedicalEvent.severityCode')"
+                :label="t('severityCode')"
                 :items="severityOptions"
                 item-title="label"
                 item-value="value"
@@ -207,12 +218,12 @@ function setError(state: boolean) {
               />
             </v-col>
 
-            <v-col cols="12" md="10">
+            <v-col cols="11">
               <v-autocomplete
                 v-model="form.patient"
                 :items="patients"
-                :label="t('createMedicalEvent.patient')"
-                :item-title="showFullName"
+                :label="t('patient')"
+                :item-title="showPatientFullName"
                 item-value="id"
                 return-object
                 clearable
@@ -225,7 +236,7 @@ function setError(state: boolean) {
               />
             </v-col>
 
-            <v-col cols="12" md="2" class="d-flex align-center">
+            <v-col cols="1" class="d-flex align-center">
               <v-btn
                 icon
                 size="small"
@@ -246,7 +257,7 @@ function setError(state: boolean) {
             <v-col cols="12">
               <v-textarea
                 v-model="form.dischargeLetter"
-                :label="t('createMedicalEvent.dischargeLetter')"
+                :label="t('dischargeLetter')"
                 variant="outlined"
                 :error="Boolean(errors.dischargeLetter)"
                 :error-messages="
@@ -259,14 +270,13 @@ function setError(state: boolean) {
             <v-col cols="12">
               <v-select
                 v-model="form.medicalExamIds"
-                :label="t('createMedicalEvent.medicalExamIds')"
+                :label="t('medicalExamIds')"
                 :items="medicalExams"
                 :item-title="(exam) => `#${exam.examId} - ${exam.examType}`"
                 item-value="examId"
                 multiple
                 chips
                 variant="outlined"
-                hint="Selected: {{ form.medicalExamIds.join(', ') || 'None' }}"
                 persistent-hint
               />
             </v-col>
@@ -278,7 +288,7 @@ function setError(state: boolean) {
                 :loading="isSubmitting"
                 block
               >
-                {{ t("createMedicalEvent.submit") }}
+                {{ t("submit") }}
               </v-btn>
             </v-col>
           </v-row>

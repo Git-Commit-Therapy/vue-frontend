@@ -68,5 +68,19 @@
   "eventList": "Your medical events",
   "dateTime": "When",
   "fetchError": "Error during data fetching, try again.",
-  "submitError": "Error during submit, fix the fields and try again."
+  "submitError": "Error during submit, fix the fields and try again.",
+  "white": "White code",
+  "green": "Green code",
+  "yellow": "Yellow code",
+  "orange": "Orange code",
+  "red": "Red code",
+  "fromDateTime": "Starting date",
+  "toDateTime": "Ending date",
+  "medicalExamIds": "Medical Exams ID",
+  "createAppointmentTitle": "Create a new appointment",
+  "createAppointment": "Create appointment",
+  "editAppointment": "Edit appointment",
+  "createMedicalEventTitle": "Create a new medical event",
+  "createMedicalEvent": "Create event",
+  "editMedicalEvent": "Edit event"
 }

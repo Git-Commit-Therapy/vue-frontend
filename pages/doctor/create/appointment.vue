@@ -119,7 +119,7 @@ function setError(value: boolean) {
 
   <v-card class="mx-auto my-4" max-width="800">
     <v-card-title class="text-h5">
-      {{ t("appointment.title") }}
+      {{ t("createAppointmentTitle") }}
     </v-card-title>
     <v-card-text>
       <form @submit.prevent="submitForm">

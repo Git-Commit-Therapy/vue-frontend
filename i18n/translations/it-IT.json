@@ -67,5 +67,19 @@
   "eventList": "I tuoi eventi",
   "dateTime": "Data",
   "fetchError": "Errore durante il caricamento dei dati, riprova.",
-  "submitError": "Errore durante l'invio, sistema i problemi e riprova."
+  "submitError": "Errore durante l'invio, sistema i problemi e riprova.",
+  "white": "Codice bianco",
+  "green": "Codice verde",
+  "yellow": "Codice giallo",
+  "orange": "Codice arancione",
+  "red": "Codice rosso",
+  "fromDateTime": "Data inizio",
+  "toDateTime": "Data fine",
+  "medicalExamIds": "ID esami",
+  "createAppointmentTitle": "Crea un nuovo appuntamento",
+  "createAppointment": "Crea appuntamento",
+  "editAppointment": "Modifica appuntamento",
+  "createMedicalEventTitle": "Crea un nuovo evento",
+  "createMedicalEvent": "Crea evento",
+  "editMedicalEvent": "Modifica evento"
 }
