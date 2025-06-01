@@ -288,6 +288,10 @@ export default class EmployeeGRPC {
     return this.employeeConnection.createMedicalInfo(info);
   }
 
+  getMedicalInfo(patient: Patient) {
+    return this.employeeConnection.getMedicalInfo(patient);
+  }
+
   /**
    * Creates an appointment for a given patient.
    * @param {Appointment} appointment Appointment details including staff, doctor, and patient.
