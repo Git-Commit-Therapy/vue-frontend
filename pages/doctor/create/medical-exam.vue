@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onBeforeMount } from "vue";
+import { watch, ref, reactive, computed, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import EmployeeGRPC from "@/composable/clients/employeeGrpcClient";
 import type { MedicalExam } from "@/composable/protobuf/frontend/medical_exam";
@@ -36,13 +36,10 @@ const touched = reactive({
 });
 
 const errors = computed(() => ({
-  dateTime: touched.dateTime && !form.dateTime ? t("validation.required") : "",
+  dateTime: touched.dateTime && !form.dateTime ? t("required") : "",
   medicalReport:
-    touched.medicalReport && !form.medicalReport.trim()
-      ? t("validation.required")
-      : "",
-  examType:
-    touched.examType && !form.examType.trim() ? t("validation.required") : "",
+    touched.medicalReport && !form.medicalReport.trim() ? t("required") : "",
+  examType: touched.examType && !form.examType.trim() ? t("required") : "",
 }));
 
 const submit = async () => {
@@ -61,10 +58,28 @@ const submit = async () => {
 
   try {
     const response = await employeeGRPC.createMedicalExam(payload);
-    console.log("Exam created:", response);
+    resetForm();
   } catch (error) {
-    console.error("Failed to create exam:", error);
+    showError.value = true;
+    errorMessage.value = t("submitError");
   }
+};
+
+const resetForm = () => {
+  form.examId = -1;
+  form.dateTime = undefined;
+  form.medicalReport = "";
+  form.examType = "";
+  form.patient = undefined;
+  form.medicalEvent = undefined;
+
+  touched.dateTime = false;
+  touched.medicalReport = false;
+  touched.examType = false;
+
+  disabledFields.dateTime = false;
+  disabledFields.patient = false;
+  disabledFields.medicalEvent = false;
 };
 
 onBeforeMount(async () => {
@@ -76,22 +91,59 @@ onBeforeMount(async () => {
     await employeeGRPC.getAllMedicalEvents({
       fromDate: undefined,
       toDate: undefined,
+      patient: undefined,
     })
   ).medicalEvent;
 });
+
+watch(
+  () => form.patient,
+  async (newPatient) => {
+    if (newPatient && newPatient.user) {
+      try {
+        const response = await employeeGRPC.getAllMedicalEvents({
+          fromDate: undefined,
+          toDate: undefined,
+          patient: newPatient,
+        });
+        medicalEvents.value = response.medicalEvent;
+      } catch (error) {
+        showError.value = true;
+        errorMessage.value = t("fetchError");
+      }
+    }
+  },
+);
+const showError = ref(false);
+const errorMessage = ref("");
+
+function setError(value: boolean) {
+  showError.value = value;
+}
 </script>
 
 <template>
   <v-container class="py-10">
+    <v-snackbar
+      v-model="showError"
+      timeout="5000"
+      color="error"
+      location="top right"
+    >
+      {{ errorMessage }}
+      <template #actions>
+        <v-btn variant="text" icon="mdi-close" @click="setError(false)" />
+      </template>
+    </v-snackbar>
     <v-card class="mx-auto" max-width="600">
-      <v-card-title>{{ $t("createMedicalExam.title") }}</v-card-title>
+      <v-card-title>{{ t("createMedicalExamTitle") }}</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submit">
           <v-row align="center" justify="center">
             <v-col>
               <v-text-field
                 v-model="form.dateTime"
-                :label="$t('createMedicalExam.dateTime')"
+                :label="t('dateTime')"
                 type="datetime-local"
                 :disabled="disabledFields.dateTime"
                 :error-messages="errors.dateTime"
@@ -120,7 +172,7 @@ onBeforeMount(async () => {
 
           <v-text-field
             v-model="form.examType"
-            :label="$t('createMedicalExam.examType')"
+            :label="t('examType')"
             :error-messages="errors.examType"
             @blur="touched.examType = true"
             required
@@ -128,7 +180,7 @@ onBeforeMount(async () => {
 
           <v-textarea
             v-model="form.medicalReport"
-            :label="$t('createMedicalExam.medicalReport')"
+            :label="t('medicalReport')"
             :error-messages="errors.medicalReport"
             @blur="touched.medicalReport = true"
             required
@@ -140,8 +192,8 @@ onBeforeMount(async () => {
                 v-model="form.patient"
                 :items="patients"
                 :search-input.sync="searchPatient"
-                :label="$t('createMedicalExam.patient')"
-                :item-title="showFullName"
+                :label="t('patient')"
+                :item-title="showPatientFullName"
                 item-value="id"
                 return-object
                 clearable
@@ -173,7 +225,7 @@ onBeforeMount(async () => {
             <v-col>
               <v-select
                 v-model="form.medicalEvent"
-                :label="$t('createMedicalExam.medicalEvent')"
+                :label="t('medicalEvent')"
                 :items="medicalEvents"
                 item-title="label"
                 item-value="value"
@@ -203,7 +255,7 @@ onBeforeMount(async () => {
           </v-row>
 
           <v-btn type="submit" color="primary" class="mt-4">
-            {{ $t("createMedicalExam.submit") }}
+            {{ t("submit") }}
           </v-btn>
         </v-form>
       </v-card-text>
