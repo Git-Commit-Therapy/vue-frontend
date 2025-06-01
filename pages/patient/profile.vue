@@ -8,6 +8,7 @@ const config = useRuntimeConfig();
 const patientGRPC: PatientGRPC = PatientGRPC.getInstance(
   config.public.patientsUrl,
 );
+
 const patient = ref<Patient>();
 const medicalInfo = ref<MedicalInfo[]>([]);
 const nameSurname = ref<string>("");
