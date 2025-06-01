@@ -130,7 +130,9 @@ const removePatient = async () => {
 };
 
 // Init
-fetchPatients();
+onBeforeMount(async () => {
+  await fetchPatients();
+});
 </script>
 
 <template>
