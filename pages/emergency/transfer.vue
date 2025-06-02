@@ -5,10 +5,10 @@ import { TransferPatientRequest } from "~/composable/protobuf/frontend/emergency
 import type { Patient } from "~/composable/protobuf/frontend/user";
 import type { Ward } from "~/composable/protobuf/frontend/ward";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
-import env from "~/utils/env";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 // Form data
 const selectedPatient = ref<Patient | null>(null);

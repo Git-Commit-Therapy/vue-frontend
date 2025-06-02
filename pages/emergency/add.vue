@@ -9,10 +9,10 @@ import type { Patient } from "~/composable/protobuf/frontend/user";
 import type { Doctor } from "~/composable/protobuf/frontend/user";
 import { SeverityCode } from "~/composable/protobuf/frontend/medical_event";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
-import env from "~/utils/env";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 // Form data
 const selectedPatient = ref<Patient | null>(null);
