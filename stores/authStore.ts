@@ -145,7 +145,7 @@ export const useAuthStore = defineStore("auth", () => {
    * @returns {boolean} True if the user has that role, False otherwise.
    */
   function isPatient(): boolean {
-    return roles.value.includes("/patient");
+    return roles.value.includes("/patients");
   }
 
   return {
