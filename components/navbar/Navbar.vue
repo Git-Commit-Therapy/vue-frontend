@@ -2,7 +2,6 @@
 import { useI18n } from "vue-i18n";
 import { useLocale, useTheme } from "vuetify";
 import { useAuthStore } from "@/stores/authStore";
-import { getUserRoles } from "~/utils/user-roles";
 
 const authStore = useAuthStore();
 const { setLocale } = useI18n();
