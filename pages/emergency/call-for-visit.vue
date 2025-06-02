@@ -39,9 +39,8 @@ const fetchPatients = async () => {
   try {
     patients.value = (await employeeGRPC.getAllPatients()).patients;
   } catch (err) {
-    console.error("Failed to fetch patients", err);
     showError.value = true;
-    errorMessage.value = t("patients.fetchError") || "Failed to fetch patients";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingPatients.value = false;
   }
@@ -50,7 +49,7 @@ const fetchPatients = async () => {
 const callPatientForVisit = async () => {
   if (!isFormValid.value) {
     showError.value = true;
-    errorMessage.value = t("form.invalid") || "Please fill all required fields";
+    errorMessage.value = t("required");
     return;
   }
 
@@ -66,17 +65,13 @@ const callPatientForVisit = async () => {
 
     // Show success message
     showError.value = true;
-    errorMessage.value =
-      t("patient.callSuccess") ||
-      `Patient ${selectedPatient.value?.user?.name} ${selectedPatient.value?.user?.surname} called to ${ambulatory.value}`;
-
+    errorMessage.value = t("submitSuccess");
     // Reset form
     resetForm();
   } catch (err) {
     console.error("Failed to call patient", err);
     showError.value = true;
-    errorMessage.value =
-      t("patient.callError") || "Failed to call patient for visit";
+    errorMessage.value = t("submitError");
   } finally {
     loading.value = false;
   }
@@ -90,11 +85,6 @@ const resetForm = () => {
 
 const setError = (value: boolean) => {
   showError.value = value;
-};
-
-// Format patient display
-const formatPatient = (patient: Patient) => {
-  return `${patient.user?.name} ${patient.user?.surname} (${patient.user?.email})`;
 };
 </script>
 
@@ -115,7 +105,7 @@ const formatPatient = (patient: Patient) => {
     <v-card>
       <v-card-title>
         <v-icon start>mdi-account-voice</v-icon>
-        {{ t("callPatient") || "Call Patient for Visit" }}
+        {{ t("callPatientTitle") }}
       </v-card-title>
 
       <v-card-text>
@@ -128,22 +118,19 @@ const formatPatient = (patient: Patient) => {
                 v-model:search="patientSearch"
                 :items="patients"
                 :loading="loadingPatients"
-                :label="t('selectPatient') || 'Select Patient *'"
+                :label="t('patient')"
                 variant="outlined"
-                :item-title="formatPatient"
+                :item-title="showPatientFullName"
                 return-object
                 clearable
                 @update:search="fetchPatients"
-                :rules="[(v) => !!v || 'Patient is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noPatients") ||
-                        "No patients found. Start typing to search."
-                      }}
+                      {{ t("noPatients") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -154,9 +141,9 @@ const formatPatient = (patient: Patient) => {
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="ambulatory"
-                :label="t('ambulatory') || 'Ambulatory/Room *'"
+                :label="t('ambulatory')"
                 variant="outlined"
-                :rules="[(v) => !!v || 'Ambulatory is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               />
             </v-col>
@@ -173,7 +160,7 @@ const formatPatient = (patient: Patient) => {
           :disabled="!isFormValid"
         >
           <v-icon start>mdi-phone</v-icon>
-          {{ t("callPatient") || "Call Patient" }}
+          {{ t("submit") }}
         </v-btn>
 
         <v-btn
@@ -183,7 +170,7 @@ const formatPatient = (patient: Patient) => {
           :disabled="loading"
         >
           <v-icon start>mdi-refresh</v-icon>
-          {{ t("reset") || "Reset Form" }}
+          {{ t("reset") }}
         </v-btn>
       </v-card-actions>
     </v-card>

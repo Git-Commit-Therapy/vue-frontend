@@ -16,7 +16,6 @@ const searchParams = reactive<GetAllMedicalEventRequest>({
   fromDate: undefined,
   toDate: undefined,
 });
-
 const loading = ref(false);
 const showError = ref(false);
 const errorMessage = ref("");

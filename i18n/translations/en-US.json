@@ -101,5 +101,18 @@
   "searchAppointments": "Search appointments",
   "submitSuccess": "Success",
   "modifyMedicalInfoTitle": "Modify medical informations",
-  "existingMedicalInfo": "Existing information"
+  "existingMedicalInfo": "Existing information",
+  "modify": "Modify",
+  "addPatientTitle": "Add a new patient to the emergency room",
+  "addPatient": "Add patient",
+  "callForVisit": "Call for visit",
+  "callPatientTitle": "Call a patient",
+  "noPatients": "No patients found",
+  "noWards": "No ward found",
+  "ambulatory": "Ambulatory",
+  "removePatient": "Delete patient",
+  "removePatientTitle": "Delete patient from the emergency room",
+  "selectEvent": "Select an event",
+  "transferPatient": "Transfer patient",
+  "transferPatientTitle": "Transfer a patient"
 }

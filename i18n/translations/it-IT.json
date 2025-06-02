@@ -100,5 +100,18 @@
   "searchAppointments": "Ricerca appuntamenti",
   "submitSuccess": "Successo",
   "modifyMedicalInfoTitle": "Modifica informazioni mediche",
-  "existingMedicalInfo": "Informazione esistente"
+  "existingMedicalInfo": "Informazione esistente",
+  "modify": "Modifica",
+  "addPatientTitle": "Aggiungi un nuovo paziente al pronto soccorso",
+  "addPatient": "Aggiungi paziente",
+  "callForVisit": "Chiama per visita",
+  "callPatientTitle": "Chiama un paziente",
+  "noPatients": "Nessun paziente trovato",
+  "noWards": "Nessun reparto trovato",
+  "ambulatory": "Ambulatorio",
+  "removePatient": "Rimuovi paziente",
+  "removePatientTitle": "Rimuovi un paziente dal pronto soccorso",
+  "selectEvent": "Seleziona un evento",
+  "transferPatient": "Trasferisci paziente",
+  "transferPatientTitle": "Trasferisci un paziente"
 }

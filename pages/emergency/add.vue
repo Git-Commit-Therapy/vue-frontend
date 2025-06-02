@@ -33,12 +33,12 @@ const patients = ref<Patient[]>([]);
 const patientSearch = ref<string>("");
 const loadingPatients = ref(false);
 
-const severityCodes = ref<{ value: SeverityCode; title: string }[]>([
-  { value: SeverityCode.WHITE, title: "Low Priority" },
-  { value: SeverityCode.GREEN, title: "Medium Priority" },
-  { value: SeverityCode.YELLOW, title: "High Priority" },
-  { value: SeverityCode.ORANGE, title: "Critical" },
-  { value: SeverityCode.RED, title: "Fatal" },
+const severityCodes = computed(() => [
+  { label: t("white"), value: SeverityCode.WHITE },
+  { label: t("green"), value: SeverityCode.GREEN },
+  { label: t("yellow"), value: SeverityCode.YELLOW },
+  { label: t("orange"), value: SeverityCode.ORANGE },
+  { label: t("red"), value: SeverityCode.RED },
 ]);
 
 // Validation
@@ -57,10 +57,8 @@ onBeforeMount(async () => {
     fetchPatients();
     currentDoctor.value = await employeeGRPC.getDoctor();
   } catch (err) {
-    console.error("Failed to fetch current doctor", err);
     showError.value = true;
-    errorMessage.value =
-      t("doctor.fetchError") || "Failed to load doctor information";
+    errorMessage.value = t("fetchError");
   }
 });
 
@@ -69,9 +67,8 @@ const fetchPatients = async () => {
   try {
     patients.value = (await employeeGRPC.getAllPatients()).patients;
   } catch (err) {
-    console.error("Failed to fetch patients", err);
     showError.value = true;
-    errorMessage.value = t("patients.fetchError") || "Failed to fetch patients";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingPatients.value = false;
   }
@@ -80,14 +77,13 @@ const fetchPatients = async () => {
 const addPatient = async () => {
   if (!isFormValid.value) {
     showError.value = true;
-    errorMessage.value = t("form.invalid") || "Please fill all required fields";
+    errorMessage.value = t("required");
     return;
   }
 
   if (!currentDoctor.value) {
     showError.value = true;
-    errorMessage.value =
-      t("doctor.notLoaded") || "Doctor information not loaded";
+    errorMessage.value = t("required");
     return;
   }
 
@@ -107,16 +103,14 @@ const addPatient = async () => {
 
     // Show success message
     showError.value = true;
-    errorMessage.value =
-      t("patient.addSuccess") ||
-      `Patient added successfully. Emergency ID: ${response.emergencyPatientId}`;
+    errorMessage.value = t("submitSuccess");
 
     // Reset form
     resetForm();
   } catch (err) {
     console.error("Failed to add patient", err);
     showError.value = true;
-    errorMessage.value = t("patient.addError") || "Failed to add patient";
+    errorMessage.value = t("submitError");
   } finally {
     loading.value = false;
   }
@@ -132,11 +126,6 @@ const resetForm = () => {
 
 const setError = (value: boolean) => {
   showError.value = value;
-};
-
-// Format patient display
-const formatPatient = (patient: Patient) => {
-  return `${patient.user?.name} ${patient.user?.surname} (${patient.user?.email})`;
 };
 </script>
 
@@ -157,7 +146,7 @@ const formatPatient = (patient: Patient) => {
     <v-card>
       <v-card-title>
         <v-icon start>mdi-account-plus</v-icon>
-        {{ t("addPatient") || "Add Patient to Emergency Ward" }}
+        {{ t("addPatientTitle") }}
       </v-card-title>
 
       <v-card-text>
@@ -170,22 +159,19 @@ const formatPatient = (patient: Patient) => {
                 v-model:search="patientSearch"
                 :items="patients"
                 :loading="loadingPatients"
-                :label="t('selectPatient') || 'Select Patient *'"
+                :label="t('patient')"
                 variant="outlined"
-                :item-title="formatPatient"
+                :item-title="showPatientFullName"
                 return-object
                 clearable
                 @update:search="fetchPatients"
-                :rules="[(v) => !!v || 'Patient is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noPatients") ||
-                        "No patients found. Start typing to search."
-                      }}
+                      {{ t("noPatients") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -197,12 +183,12 @@ const formatPatient = (patient: Patient) => {
               <v-select
                 v-model="selectedSeverityCode"
                 :items="severityCodes"
-                :label="t('severityCode') || 'Severity Code *'"
+                :label="t('severityCode')"
                 variant="outlined"
+                item-title="label"
+                item-value="value"
                 :rules="[
-                  (v) =>
-                    (v !== null && v !== undefined) ||
-                    'Severity code is required',
+                  (v) => (v !== null && v !== undefined) || t('required'),
                 ]"
                 required
               />
@@ -211,9 +197,9 @@ const formatPatient = (patient: Patient) => {
             <v-col cols="12">
               <v-text-field
                 v-model="examType"
-                :label="t('examType') || 'Exam Type *'"
+                :label="t('examType')"
                 variant="outlined"
-                :rules="[(v) => !!v || 'Exam type is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               />
             </v-col>
@@ -222,13 +208,13 @@ const formatPatient = (patient: Patient) => {
             <v-col cols="12">
               <v-textarea
                 v-model="medicalReport"
-                :label="t('medicalReport') || 'Medical Report *'"
+                :label="t('medicalReport')"
                 variant="outlined"
                 rows="4"
                 counter
-                :rules="[(v) => !!v || 'Medical report is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
-                hint="Describe the patient's condition, symptoms, and initial assessment"
+                :hint="t('reportHint')"
               />
             </v-col>
           </v-row>
@@ -244,7 +230,7 @@ const formatPatient = (patient: Patient) => {
           :disabled="!isFormValid"
         >
           <v-icon start>mdi-plus</v-icon>
-          {{ t("addPatient") || "Add Patient" }}
+          {{ t("submit") }}
         </v-btn>
 
         <v-btn
@@ -254,7 +240,7 @@ const formatPatient = (patient: Patient) => {
           :disabled="loading"
         >
           <v-icon start>mdi-refresh</v-icon>
-          {{ t("reset") || "Reset Form" }}
+          {{ t("reset") }}
         </v-btn>
       </v-card-actions>
     </v-card>

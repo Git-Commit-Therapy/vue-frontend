@@ -38,9 +38,8 @@ onBeforeMount(async () => {
     fetchPatients();
     fetchWards();
   } catch (err) {
-    console.error("Init failed", err);
     showError.value = true;
-    errorMessage.value = t("init.fetchError") || "Failed to load data";
+    errorMessage.value = t("fetchError");
   }
 });
 
@@ -51,7 +50,7 @@ const fetchPatients = async () => {
   } catch (err) {
     console.error("Failed to fetch patients", err);
     showError.value = true;
-    errorMessage.value = t("patients.fetchError") || "Failed to fetch patients";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingPatients.value = false;
   }
@@ -64,7 +63,7 @@ const fetchWards = async () => {
   } catch (err) {
     console.error("Failed to fetch wards", err);
     showError.value = true;
-    errorMessage.value = t("wards.fetchError") || "Failed to fetch wards";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingWards.value = false;
   }
@@ -73,7 +72,7 @@ const fetchWards = async () => {
 const transferPatient = async () => {
   if (!isFormValid.value) {
     showError.value = true;
-    errorMessage.value = t("form.invalid") || "Please fill all required fields";
+    errorMessage.value = t("required");
     return;
   }
 
@@ -88,15 +87,13 @@ const transferPatient = async () => {
     await employeeGRPC.transferEmergencyPatient(request);
 
     showError.value = true;
-    errorMessage.value =
-      t("patient.transferSuccess") || "Patient transferred successfully";
+    errorMessage.value = t("submitSuccess");
 
     resetForm();
   } catch (err) {
     console.error("Failed to transfer patient", err);
     showError.value = true;
-    errorMessage.value =
-      t("patient.transferError") || "Failed to transfer patient";
+    errorMessage.value = t("submitError");
   } finally {
     loading.value = false;
   }
@@ -113,13 +110,8 @@ const setError = (value: boolean) => {
   showError.value = value;
 };
 
-// Format display
-const formatPatient = (patient: Patient) => {
-  return `${patient.user?.name} ${patient.user?.surname} (${patient.user?.email})`;
-};
-
 const formatWard = (ward: Ward) => {
-  return `${ward.name} (ID: ${ward.id})`;
+  return `${ward.name}`;
 };
 </script>
 
@@ -140,7 +132,7 @@ const formatWard = (ward: Ward) => {
     <v-card>
       <v-card-title>
         <v-icon start>mdi-transfer</v-icon>
-        {{ t("transferPatient") || "Transfer Patient" }}
+        {{ t("transferPatientTitle") }}
       </v-card-title>
 
       <v-card-text>
@@ -153,22 +145,19 @@ const formatWard = (ward: Ward) => {
                 v-model:search="patientSearch"
                 :items="patients"
                 :loading="loadingPatients"
-                :label="t('selectPatient') || 'Select Patient *'"
+                :label="t('patient')"
                 variant="outlined"
-                :item-title="formatPatient"
+                :item-title="showPatientFullName"
                 return-object
                 clearable
                 @update:search="fetchPatients"
-                :rules="[(v) => !!v || 'Patient is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noPatients") ||
-                        "No patients found. Start typing to search."
-                      }}
+                      {{ t("noPatients") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -182,22 +171,19 @@ const formatWard = (ward: Ward) => {
                 v-model:search="wardSearch"
                 :items="wards"
                 :loading="loadingWards"
-                :label="t('selectWard') || 'Select Ward *'"
+                :label="t('ward')"
                 variant="outlined"
                 :item-title="formatWard"
                 return-object
                 clearable
                 @update:search="fetchWards"
-                :rules="[(v) => !!v || 'Ward is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noWards") ||
-                        "No wards found. Start typing to search."
-                      }}
+                      {{ t("noWards") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -216,7 +202,7 @@ const formatWard = (ward: Ward) => {
           :disabled="!isFormValid"
         >
           <v-icon start>mdi-transfer</v-icon>
-          {{ t("transferPatient") || "Transfer Patient" }}
+          {{ t("submit") }}
         </v-btn>
 
         <v-btn
@@ -226,7 +212,7 @@ const formatWard = (ward: Ward) => {
           :disabled="loading"
         >
           <v-icon start>mdi-refresh</v-icon>
-          {{ t("reset") || "Reset Form" }}
+          {{ t("reset") }}
         </v-btn>
       </v-card-actions>
     </v-card>
