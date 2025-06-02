@@ -3,11 +3,11 @@ import { ref, onBeforeMount, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Patient } from "~/composable/protobuf/frontend/user";
 import EmployeeGRPC from "~/composable/clients/employeeGrpcClient";
-import env from "~/utils/env";
 import { CallPatientRequest } from "~/composable/protobuf/frontend/emergency_ward_services";
 
 const { t } = useI18n();
-const employeeGRPC = EmployeeGRPC.getInstance(env.EMPLOYEES_URL);
+const config = useRuntimeConfig();
+const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 
 // Form data
 const selectedPatient = ref<Patient | null>(null);
