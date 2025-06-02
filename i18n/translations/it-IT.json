@@ -107,8 +107,11 @@
   "callForVisit": "Chiama per visita",
   "callPatientTitle": "Chiama un paziente",
   "noPatients": "Nessun paziente trovato",
+  "noWards": "Nessun reparto trovato",
   "ambulatory": "Ambulatorio",
   "removePatient": "Rimuovi paziente",
   "removePatientTitle": "Rimuovi un paziente dal pronto soccorso",
-  "selectEvent": "Seleziona un evento"
+  "selectEvent": "Seleziona un evento",
+  "transferPatient": "Trasferisci paziente",
+  "transferPatientTitle": "Trasferisci un paziente"
 }
