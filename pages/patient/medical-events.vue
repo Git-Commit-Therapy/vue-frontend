@@ -69,7 +69,7 @@ async function toggleEventDetails(event: MedicalEvent | null): Promise<void> {
 function getMedicalEvents(): void {
   loading.value = true;
   patientGRPC
-    .getAllMedicalEvent(from.value, to.value)
+    .getAllMedicalEvent(new Date(from.value), new Date(to.value))
     .then((response: GetAllMedicalEventResponse) => {
       medicalEvents.value = response;
     })
