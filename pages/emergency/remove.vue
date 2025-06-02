@@ -51,11 +51,6 @@ const resetForm = () => {
   medicalEvents.value = [];
 };
 
-// Format display
-const formatPatient = (patient: Patient) => {
-  return `${patient.user?.name} ${patient.user?.surname} (${patient.user?.email})`;
-};
-
 const formatEvent = (event: MedicalEvent) => {
   return `Event ID: ${event.eventId} — ${event.fromDateTime?.toLocaleString()}, ${event.toDateTime?.toLocaleString()}`;
 };
@@ -68,7 +63,7 @@ const fetchPatients = async () => {
   } catch (err) {
     console.error("Failed to fetch patients", err);
     showError.value = true;
-    errorMessage.value = t("patients.fetchError") || "Failed to fetch patients";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingPatients.value = false;
   }
@@ -93,8 +88,7 @@ watch(selectedPatient, async (newPatient) => {
   } catch (err) {
     console.error("Failed to fetch medical events", err);
     showError.value = true;
-    errorMessage.value =
-      t("events.fetchError") || "Failed to fetch medical events";
+    errorMessage.value = t("fetchError");
   } finally {
     loadingEvents.value = false;
   }
@@ -104,7 +98,7 @@ watch(selectedPatient, async (newPatient) => {
 const removePatient = async () => {
   if (!isFormValid.value) {
     showError.value = true;
-    errorMessage.value = t("form.invalid") || "Please fill all required fields";
+    errorMessage.value = t("required");
     return;
   }
 
@@ -118,12 +112,12 @@ const removePatient = async () => {
   try {
     await employeeGRPC.removeEmergencyPatient(request);
     showError.value = true;
-    errorMessage.value = t("patient.removed") || "Patient successfully removed";
+    errorMessage.value = t("submitSuccess");
     resetForm();
   } catch (err) {
     console.error("Remove failed", err);
     showError.value = true;
-    errorMessage.value = t("patient.removeError") || "Failed to remove patient";
+    errorMessage.value = t("submitError");
   } finally {
     loading.value = false;
   }
@@ -152,7 +146,7 @@ onBeforeMount(async () => {
     <v-card>
       <v-card-title>
         <v-icon start>mdi-account-remove</v-icon>
-        {{ t("removePatient") || "Remove Patient" }}
+        {{ t("removePatientTitle") }}
       </v-card-title>
 
       <v-card-text>
@@ -164,22 +158,19 @@ onBeforeMount(async () => {
                 v-model:search="patientSearch"
                 :items="patients"
                 :loading="loadingPatients"
-                :label="t('selectPatient') || 'Select Patient *'"
+                :label="t('patient')"
                 variant="outlined"
-                :item-title="formatPatient"
+                :item-title="showPatientFullName"
                 return-object
                 clearable
                 @update:search="fetchPatients"
-                :rules="[(v) => !!v || 'Patient is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noPatients") ||
-                        "No patients found. Start typing to search."
-                      }}
+                      {{ t("noPatients") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -191,20 +182,18 @@ onBeforeMount(async () => {
                 v-model="selectedMedicalEvent"
                 :items="medicalEvents"
                 :loading="loadingEvents"
-                :label="t('selectEvent') || 'Select Medical Event *'"
+                :label="t('selectEvent')"
                 variant="outlined"
                 :item-title="formatEvent"
                 return-object
                 clearable
-                :rules="[(v) => !!v || 'Event is required']"
+                :rules="[(v) => !!v || t('required')]"
                 required
               >
                 <template #no-data>
                   <v-list-item>
                     <v-list-item-title>
-                      {{
-                        t("noEvents") || "No events found for selected patient."
-                      }}
+                      {{ t("noEvents") }}
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -214,14 +203,11 @@ onBeforeMount(async () => {
             <v-col cols="12">
               <v-textarea
                 v-model="dischargeLetter"
-                :label="t('dischargeLetter') || 'Discharge Letter *'"
+                :label="t('dischargeLetter')"
                 variant="outlined"
                 auto-grow
                 rows="4"
-                :rules="[
-                  (v) =>
-                    (!!v && v.length > 0) || 'Discharge letter is required',
-                ]"
+                :rules="[(v) => (!!v && v.length > 0) || t('required')]"
                 required
               />
             </v-col>
@@ -238,7 +224,7 @@ onBeforeMount(async () => {
           :disabled="!isFormValid"
         >
           <v-icon start>mdi-account-remove</v-icon>
-          {{ t("removePatient") || "Remove Patient" }}
+          {{ t("submit") }}
         </v-btn>
 
         <v-btn
@@ -248,7 +234,7 @@ onBeforeMount(async () => {
           :disabled="loading"
         >
           <v-icon start>mdi-refresh</v-icon>
-          {{ t("reset") || "Reset Form" }}
+          {{ t("reset") }}
         </v-btn>
       </v-card-actions>
     </v-card>

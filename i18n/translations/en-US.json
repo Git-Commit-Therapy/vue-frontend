@@ -108,5 +108,8 @@
   "callForVisit": "Call for visit",
   "callPatientTitle": "Call a patient",
   "noPatients": "No patients found",
-  "ambulatory": "Ambulatory"
+  "ambulatory": "Ambulatory",
+  "removePatient": "Delete patient",
+  "removePatientTitle": "Delete patient from the emergency room",
+  "selectEvent": "Select an event"
 }
