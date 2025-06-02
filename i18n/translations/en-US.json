@@ -101,5 +101,6 @@
   "searchAppointments": "Search appointments",
   "submitSuccess": "Success",
   "modifyMedicalInfoTitle": "Modify medical informations",
-  "existingMedicalInfo": "Existing information"
+  "existingMedicalInfo": "Existing information",
+  "modify": "Modify"
 }

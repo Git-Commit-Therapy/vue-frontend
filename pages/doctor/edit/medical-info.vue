@@ -92,7 +92,7 @@ async function submitForm() {
     const res = await employeeGRPC.modifyMedicalInfo(medicalInfo);
     if (res.success) {
       showSuccess.value = true;
-      successMessage.value = t("medicalInfoModified");
+      successMessage.value = t("submitSuccess");
       resetForm();
     }
   } catch (e) {
@@ -219,7 +219,7 @@ function setSuccess(value: boolean) {
                 :loading="isSubmitting"
                 block
               >
-                {{ t("modifyMedicalInfo") }}
+                {{ t("modify") }}
               </v-btn>
             </v-col>
           </v-row>

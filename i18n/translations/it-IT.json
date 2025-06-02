@@ -100,5 +100,6 @@
   "searchAppointments": "Ricerca appuntamenti",
   "submitSuccess": "Successo",
   "modifyMedicalInfoTitle": "Modifica informazioni mediche",
-  "existingMedicalInfo": "Informazione esistente"
+  "existingMedicalInfo": "Informazione esistente",
+  "modify": "Modifica"
 }
