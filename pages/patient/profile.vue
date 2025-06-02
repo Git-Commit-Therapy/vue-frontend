@@ -5,8 +5,9 @@ import type { MedicalInfo } from "@/composable/protobuf/frontend/medical_info";
 const { t } = useI18n();
 
 const config = useRuntimeConfig();
-const patientGRPC: PatientGRPC = PatientGRPC.getInstance(config.public.patientsUrl);
-// const patientGRPC: PatientGRPC = PatientGRPC.getInstance(env.PATIENTS_URL);
+const patientGRPC: PatientGRPC = PatientGRPC.getInstance(
+  config.public.patientsUrl,
+);
 
 const patient = ref<Patient>();
 const medicalInfo = ref<MedicalInfo[]>([]);
@@ -22,6 +23,10 @@ onBeforeMount(async () => {
   } catch (error) {
     console.error("Error fetching patient data:", error);
   }
+  patient.value = await patientGRPC.getPatient();
+  medicalInfo.value = (await patientGRPC.getAllMedicalInfo()).medicalInfo;
+  nameSurname.value =
+    patient.value.user!.name + " " + patient.value.user!.surname;
 });
 </script>
 
@@ -34,15 +39,8 @@ onBeforeMount(async () => {
       <v-card-item>
         <v-card-title>{{ nameSurname }} </v-card-title>
       </v-card-item>
-      <v-card-item>
-        <v-btn
-          prepend-icon="mdi-calendar-month"
-          @click="navigateTo('/patient/appointments')"
-          >{{ t("appointments") }}</v-btn
-        >
-      </v-card-item>
       <v-card-text>
-        <v-timeline align="start" density="compact">
+        <v-timeline v-if="medicalInfo.length" align="start" density="compact">
           <v-timeline-item
             v-for="info in medicalInfo"
             :key="info.medicalInfoId"
@@ -53,6 +51,9 @@ onBeforeMount(async () => {
             </div>
           </v-timeline-item>
         </v-timeline>
+        <div v-else class="mb-4">
+          <strong>{{ t("noMedicalInfo") }}</strong>
+        </div>
       </v-card-text>
     </v-card>
   </div>
