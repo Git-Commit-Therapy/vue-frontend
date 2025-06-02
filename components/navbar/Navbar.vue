@@ -16,10 +16,6 @@ function logout() {
   router.push("/login");
 }
 
-function hasRole(role: string): boolean {
-  return getUserRoles(authStore.getAccessToken()).includes(role);
-}
-
 onMounted(() => {
   const preferredTheme = localStorage.getItem("theme");
   if (preferredTheme) {
@@ -125,7 +121,7 @@ function toggleDrawer() {
 
     <v-navigation-drawer v-model="isDrawerOpen" temporary app>
       <v-list max-width="250">
-        <template v-if="hasRole('/patient')">
+        <template v-if="authStore.isPatient()">
           <v-divider class="my-2"></v-divider>
 
           <v-list-subheader>{{ $t("patient") }}</v-list-subheader>
@@ -155,7 +151,7 @@ function toggleDrawer() {
             <v-list-item-title>{{ $t("eventList") }}</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="hasRole('/staff')">
+        <template v-if="authStore.isStaff()">
           <v-divider class="my-2"></v-divider>
 
           <v-list-subheader>{{ $t("administration") }}</v-list-subheader>
@@ -187,7 +183,7 @@ function toggleDrawer() {
             <v-list-item-title>{{ $t("manageStaff") }}</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="hasRole('/doctors')">
+        <template v-if="authStore.isDoctor()">
           <v-divider class="my-2"></v-divider>
 
           <v-list-subheader>{{ $t("doctor") }}</v-list-subheader>
