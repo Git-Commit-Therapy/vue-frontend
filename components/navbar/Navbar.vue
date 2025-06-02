@@ -113,9 +113,9 @@ function toggleDrawer() {
           {{ $t("login") }}
         </v-btn>
         <v-btn
-          v-if="authStore.isValidToken()"
+          v-if="authStore.isPatient()"
           variant="text"
-          @click="router.push('/profile')"
+          @click="router.push('/patient/profile')"
         >
           <v-icon start>mdi-account-box</v-icon>
           {{ $t("profile") }}
