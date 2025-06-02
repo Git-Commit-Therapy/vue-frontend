@@ -101,5 +101,11 @@
   "submitSuccess": "Successo",
   "modifyMedicalInfoTitle": "Modifica informazioni mediche",
   "existingMedicalInfo": "Informazione esistente",
-  "modify": "Modifica"
+  "modify": "Modifica",
+  "addPatientTitle": "Aggiungi un nuovo paziente al pronto soccorso",
+  "addPatient": "Aggiungi paziente",
+  "callForVisit": "Chiama per visita",
+  "callPatientTitle": "Chiama un paziente",
+  "noPatients": "Nessun paziente trovato",
+  "ambulatory": "Ambulatorio"
 }

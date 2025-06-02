@@ -102,5 +102,11 @@
   "submitSuccess": "Success",
   "modifyMedicalInfoTitle": "Modify medical informations",
   "existingMedicalInfo": "Existing information",
-  "modify": "Modify"
+  "modify": "Modify",
+  "addPatientTitle": "Add a new patient to the emergency room",
+  "addPatient": "Add patient",
+  "callForVisit": "Call for visit",
+  "callPatientTitle": "Call a patient",
+  "noPatients": "No patients found",
+  "ambulatory": "Ambulatory"
 }
