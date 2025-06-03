@@ -23,9 +23,11 @@ const examType = ref<string>("");
 // UI state
 const loading = ref<boolean>(false);
 const showError = ref(false);
+const showSuccess = ref(false);
 const errorMessage = ref("");
+const successMessage = ref("");
 
-// Current doctor (filled automatically)
+// Current doctor
 const currentDoctor = ref<Doctor | null>(null);
 
 // Autocomplete data
@@ -54,8 +56,8 @@ const isFormValid = computed(() => {
 onBeforeMount(async () => {
   // Get current doctor
   try {
-    fetchPatients();
     currentDoctor.value = await employeeGRPC.getDoctor();
+    fetchPatients();
   } catch (err) {
     showError.value = true;
     errorMessage.value = t("fetchError");
@@ -102,8 +104,8 @@ const addPatient = async () => {
       await employeeGRPC.addEmergencyPatient(request);
 
     // Show success message
-    showError.value = true;
-    errorMessage.value = t("submitSuccess");
+    showSuccess.value = true;
+    successMessage.value = t("submitSuccess");
 
     // Reset form
     resetForm();
@@ -127,18 +129,36 @@ const resetForm = () => {
 const setError = (value: boolean) => {
   showError.value = value;
 };
+
+const setSuccess = (value: boolean) => {
+  showSuccess.value = value;
+};
 </script>
 
 <template>
+  <!-- Error Snackbar -->
   <v-snackbar
     v-model="showError"
     timeout="5000"
-    :color="errorMessage.includes('success') ? 'success' : 'error'"
+    color="error"
     location="top right"
   >
     {{ errorMessage }}
     <template #actions>
       <v-btn variant="text" icon="mdi-close" @click="setError(false)" />
+    </template>
+  </v-snackbar>
+
+  <!-- Success Snackbar -->
+  <v-snackbar
+    v-model="showSuccess"
+    timeout="5000"
+    color="success"
+    location="top right"
+  >
+    {{ successMessage }}
+    <template #actions>
+      <v-btn variant="text" icon="mdi-close" @click="setSuccess(false)" />
     </template>
   </v-snackbar>
 

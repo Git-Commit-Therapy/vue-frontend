@@ -10,7 +10,7 @@ const employeeGRPC = EmployeeGRPC.getInstance(config.public.employeesUrl);
 const { t } = useI18n();
 
 const medicalInfo = reactive<MedicalInfo>({
-  medicalInfoId: -1,
+  medicalInfoId: 0,
   description: "",
   patient: undefined,
 });
@@ -82,10 +82,11 @@ async function submitForm() {
 
   try {
     isSubmitting.value = true;
-    await submitMedicalInfo(medicalInfo);
-    resetForm();
-
-    showSuccess.value = true;
+    const res = await submitMedicalInfo(medicalInfo);
+    if (res.success) {
+      showSuccess.value = true;
+      resetForm();
+    }
   } catch (error) {
     showError.value = true;
     errorMessage.value = t("submitError");
